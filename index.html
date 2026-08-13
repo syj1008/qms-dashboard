@@ -157,7 +157,7 @@ tbody tr.grp-cont.overdue{background:#fff5f5!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-08-13 16:19 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-08-13 16:37 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
@@ -418,7 +418,7 @@ new Chart(document.getElementById('barChart'),{type:'bar',data:{labels:ms,datase
 // 팀별 EVENT 분포 차트
 (function(){
   const curY=new Date().getFullYear(), preY=curY-1;
-  document.getElementById('teamChartTitle').textContent=`팀별 EVENT 발생 현황 (${preY}년 / ${curY}년) — Action 1번 담당자 소속팀 기준`;
+  document.getElementById('teamChartTitle').textContent=`팀별 EVENT 발생 현황 (${preY}년 / ${curY}년)`;
   const seen=new Set(), td={};
   DATA.forEach(r=>{
     if(r.action_idx!=='1')return;
