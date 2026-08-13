@@ -6,66 +6,66 @@
 <title>QMS HSP 진행 현황 | E-D-I-C-A 체인 관리</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-*{{box-sizing:border-box;margin:0;padding:0}}
-body{{font-family:'Malgun Gothic','Segoe UI',sans-serif;background:#f0f4f8;color:#1e293b;font-size:14px}}
-header{{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 60%,#0369a1 100%);color:#fff;padding:18px 28px;display:flex;justify-content:space-between;align-items:center}}
-header h1{{font-size:1.35rem;font-weight:800}}
-header .subtitle{{font-size:0.75rem;opacity:.65;margin-top:2px}}
-.hdr-right{{font-size:0.72rem;opacity:.55;text-align:right;line-height:1.8}}
-.wrap{{max-width:1500px;margin:0 auto;padding:18px 20px}}
-.cards{{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}}
-.card{{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 6px rgba(0,0,0,.08);border-top:3px solid transparent}}
-.card.blue{{border-color:#0369a1}}.card.green{{border-color:#16a34a}}
-.card.orange{{border-color:#ea580c}}.card.red{{border-color:#dc2626}}.card.gray{{border-color:#94a3b8}}
-.card-label{{font-size:.7rem;font-weight:700;color:#64748b;text-transform:uppercase;margin-bottom:6px}}
-.card-val{{font-size:1.9rem;font-weight:900}}
-.card.blue .card-val{{color:#0369a1}}.card.green .card-val{{color:#16a34a}}
-.card.orange .card-val{{color:#ea580c}}.card.red .card-val{{color:#dc2626}}.card.gray .card-val{{color:#64748b}}
-.card-sub{{font-size:.7rem;color:#94a3b8;margin-top:2px}}
-.charts-row{{display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-bottom:18px}}
-.chart-card{{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 6px rgba(0,0,0,.08)}}
-.chart-card h3{{font-size:.8rem;font-weight:700;color:#475569;margin-bottom:12px}}
-.chart-wrap{{position:relative;height:200px}}
-.filter-bar{{background:#fff;border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:0 1px 6px rgba(0,0,0,.08);display:flex;gap:10px;flex-wrap:wrap;align-items:center}}
-.filter-bar select,.filter-bar input{{padding:7px 10px;border:1px solid #e2e8f0;border-radius:7px;font-size:.82rem;outline:none;background:#fff}}
-.filter-bar input{{flex:1;min-width:180px}}
-.fg{{display:flex;align-items:center;gap:5px}}
-.fg label{{font-size:.72rem;font-weight:700;color:#64748b;white-space:nowrap}}
-.result-count{{margin-left:auto;font-size:.78rem;color:#64748b;font-weight:600}}
-.clear-btn{{padding:7px 12px;border:1px solid #e2e8f0;border-radius:7px;background:#fff;font-size:.8rem;cursor:pointer;color:#64748b}}
-.legend{{display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap}}
-.legend-item{{display:flex;align-items:center;gap:5px;font-size:.72rem;font-weight:600;color:#475569}}
-.dot{{width:10px;height:10px;border-radius:2px;display:inline-block}}
-.table-wrap{{background:#fff;border-radius:10px;box-shadow:0 1px 6px rgba(0,0,0,.08);overflow:hidden;margin-top:10px}}
-.tbl-scroll{{overflow-x:auto;max-height:580px;overflow-y:auto}}
-table{{width:100%;border-collapse:collapse;font-size:.8rem}}
-thead th{{background:#0f172a;color:#fff;padding:10px 12px;text-align:left;font-size:.72rem;font-weight:600;position:sticky;top:0;z-index:2;cursor:pointer;white-space:nowrap}}
-thead th:hover{{background:#1e3a5f}}
-tbody tr{{border-bottom:1px solid #f1f5f9;transition:background .1s}}
-tbody tr:hover{{background:#f8fafc}}
-tbody tr.overdue{{background:#fff5f5}}
-td{{padding:9px 12px;vertical-align:middle}}
-.chain-row{{display:flex;align-items:center;gap:4px;font-size:.72rem}}
-.chain-badge{{padding:2px 6px;border-radius:4px;font-weight:700;font-size:.68rem;white-space:nowrap}}
-.c-event{{background:#dbeafe;color:#1d4ed8}}.c-dev{{background:#f3e8ff;color:#7c3aed}}
-.c-issue{{background:#dcfce7;color:#15803d}}.c-capa{{background:#fef9c3;color:#854d0e}}
-.arrow{{color:#94a3b8}}
-.status-dot{{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px}}
-.s-Release{{background:#16a34a}}.s-Draft{{background:#f59e0b}}.s-Abort{{background:#ef4444}}
-.prog-badge{{padding:3px 10px;border-radius:12px;font-size:.72rem;font-weight:700;display:inline-block;white-space:nowrap}}
-.pb-완료{{background:#dcfce7;color:#15803d}}
-.pb-진행중{{background:#fff7ed;color:#c2410c}}
-.pb-기한초과{{background:#fee2e2;color:#991b1b;animation:pulse 2s infinite}}
-.pb-empty{{background:#f1f5f9;color:#94a3b8}}
-@keyframes pulse{{0%,100%{{opacity:1}}50%{{opacity:.6}}}}
-.dday{{font-size:.75rem;font-weight:700}}
-.dday.over{{color:#dc2626}}.dday.soon{{color:#ea580c}}.dday.ok{{color:#16a34a}}.dday.done{{color:#64748b}}
-.doc-num{{font-family:monospace;font-size:.75rem;color:#0369a1;font-weight:700}}
-.action-desc{{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#334155}}
-.dept-text{{font-size:.72rem;color:#64748b;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
-.assignee{{font-size:.78rem;font-weight:600;color:#334155}}
-.no-data{{text-align:center;padding:40px;color:#94a3b8}}
-@media(max-width:900px){{.cards{{grid-template-columns:repeat(3,1fr)}}.charts-row{{grid-template-columns:1fr}}}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Malgun Gothic','Segoe UI',sans-serif;background:#f0f4f8;color:#1e293b;font-size:14px}
+header{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 60%,#0369a1 100%);color:#fff;padding:18px 28px;display:flex;justify-content:space-between;align-items:center}
+header h1{font-size:1.35rem;font-weight:800}
+header .subtitle{font-size:0.75rem;opacity:.65;margin-top:2px}
+.hdr-right{font-size:0.72rem;opacity:.55;text-align:right;line-height:1.8}
+.wrap{max-width:1500px;margin:0 auto;padding:18px 20px}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
+.card{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 6px rgba(0,0,0,.08);border-top:3px solid transparent}
+.card.blue{border-color:#0369a1}.card.green{border-color:#16a34a}
+.card.orange{border-color:#ea580c}.card.red{border-color:#dc2626}.card.gray{border-color:#94a3b8}
+.card-label{font-size:.7rem;font-weight:700;color:#64748b;text-transform:uppercase;margin-bottom:6px}
+.card-val{font-size:1.9rem;font-weight:900}
+.card.blue .card-val{color:#0369a1}.card.green .card-val{color:#16a34a}
+.card.orange .card-val{color:#ea580c}.card.red .card-val{color:#dc2626}.card.gray .card-val{color:#64748b}
+.card-sub{font-size:.7rem;color:#94a3b8;margin-top:2px}
+.charts-row{display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-bottom:18px}
+.chart-card{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 6px rgba(0,0,0,.08)}
+.chart-card h3{font-size:.8rem;font-weight:700;color:#475569;margin-bottom:12px}
+.chart-wrap{position:relative;height:200px}
+.filter-bar{background:#fff;border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:0 1px 6px rgba(0,0,0,.08);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.filter-bar select,.filter-bar input{padding:7px 10px;border:1px solid #e2e8f0;border-radius:7px;font-size:.82rem;outline:none;background:#fff}
+.filter-bar input{flex:1;min-width:180px}
+.fg{display:flex;align-items:center;gap:5px}
+.fg label{font-size:.72rem;font-weight:700;color:#64748b;white-space:nowrap}
+.result-count{margin-left:auto;font-size:.78rem;color:#64748b;font-weight:600}
+.clear-btn{padding:7px 12px;border:1px solid #e2e8f0;border-radius:7px;background:#fff;font-size:.8rem;cursor:pointer;color:#64748b}
+.legend{display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:.72rem;font-weight:600;color:#475569}
+.dot{width:10px;height:10px;border-radius:2px;display:inline-block}
+.table-wrap{background:#fff;border-radius:10px;box-shadow:0 1px 6px rgba(0,0,0,.08);overflow:hidden;margin-top:10px}
+.tbl-scroll{overflow-x:auto;max-height:580px;overflow-y:auto}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+thead th{background:#0f172a;color:#fff;padding:10px 12px;text-align:left;font-size:.72rem;font-weight:600;position:sticky;top:0;z-index:2;cursor:pointer;white-space:nowrap}
+thead th:hover{background:#1e3a5f}
+tbody tr{border-bottom:1px solid #f1f5f9;transition:background .1s}
+tbody tr:hover{background:#f8fafc}
+tbody tr.overdue{background:#fff5f5}
+td{padding:9px 12px;vertical-align:middle}
+.chain-row{display:flex;align-items:center;gap:4px;font-size:.72rem}
+.chain-badge{padding:2px 6px;border-radius:4px;font-weight:700;font-size:.68rem;white-space:nowrap}
+.c-event{background:#dbeafe;color:#1d4ed8}.c-dev{background:#f3e8ff;color:#7c3aed}
+.c-issue{background:#dcfce7;color:#15803d}.c-capa{background:#fef9c3;color:#854d0e}
+.arrow{color:#94a3b8}
+.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px}
+.s-Release{background:#16a34a}.s-Draft{background:#f59e0b}.s-Abort{background:#ef4444}
+.prog-badge{padding:3px 10px;border-radius:12px;font-size:.72rem;font-weight:700;display:inline-block;white-space:nowrap}
+.pb-완료{background:#dcfce7;color:#15803d}
+.pb-진행중{background:#fff7ed;color:#c2410c}
+.pb-기한초과{background:#fee2e2;color:#991b1b;animation:pulse 2s infinite}
+.pb-empty{background:#f1f5f9;color:#94a3b8}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.dday{font-size:.75rem;font-weight:700}
+.dday.over{color:#dc2626}.dday.soon{color:#ea580c}.dday.ok{color:#16a34a}.dday.done{color:#64748b}
+.doc-num{font-family:monospace;font-size:.75rem;color:#0369a1;font-weight:700}
+.action-desc{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#334155}
+.dept-text{font-size:.72rem;color:#64748b;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.assignee{font-size:.78rem;font-weight:600;color:#334155}
+.no-data{text-align:center;padding:40px;color:#94a3b8}
+@media(max-width:900px){.cards{grid-template-columns:repeat(3,1fr)}.charts-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -74,7 +74,7 @@ td{{padding:9px 12px;vertical-align:middle}}
     <h1>QMS HSP 진행 현황 대시보드</h1>
     <div class="subtitle">EVENT → DEV → ISSUE → CAPA → ACTION 체인 관리 (화순공장, 2024~현재)</div>
   </div>
-  <div class="hdr-right">데이터 기준: 2026-08-13 09:47 KST<br>자동 업데이트: 매일 09:00</div>
+  <div class="hdr-right">데이터 기준: 2026-08-13 09:51 KST<br>자동 업데이트: 매일 09:00</div>
 </header>
 <div class="wrap">
   <div class="cards">
@@ -145,82 +145,82 @@ const DEPT_MAP={"HSH1025": "[OCP] OSE팀 EQ파트", "KM0806": "[OCP] QC팀(OCP) 
 // E→D→I→C→A 경로는 DEPT_MAP(Excel 매핑)으로 채워짐
 DATA.forEach(r=>{ if(!r.action_dept && r.assignee_id) r.action_dept=DEPT_MAP[r.assignee_id]||''; });
 let sortKey='event_create',_asc=false,filtered=[];
-function fmt(d){{return(!d||d==='None'||d==='')?'-':d.substring(0,10);}}
-function dday(due,p){{
-  if(!due||due===''||due==='None')return{{t:'-',c:'done',s:9999}};
-  if(p==='완료')return{{t:'완료',c:'done',s:9998}};
+function fmt(d){return(!d||d==='None'||d==='')?'-':d.substring(0,10);}
+function dday(due,p){
+  if(!due||due===''||due==='None')return{t:'-',c:'done',s:9999};
+  if(p==='완료')return{t:'완료',c:'done',s:9998};
   const d=Math.ceil((new Date(due)-new Date())/(864e5));
-  return d<0?{{t:`D+${{Math.abs(d)}}`,c:'over',s:d}}:d<=7?{{t:`D-${{d}}`,c:'soon',s:d}}:{{t:`D-${{d}}`,c:'ok',s:d}};
-}}
-function dot(s){{return`<span class="status-dot s-${{s}}"></span>`;}}
-function badge(n,s,t){{
+  return d<0?{t:`D+${Math.abs(d)}`,c:'over',s:d}:d<=7?{t:`D-${d}`,c:'soon',s:d}:{t:`D-${d}`,c:'ok',s:d};
+}
+function dot(s){return`<span class="status-dot s-${s}"></span>`;}
+function badge(n,s,t){
   if(!n)return`<span style="color:#cbd5e1">-</span>`;
-  return`<span class="chain-badge c-${{t}}" title="${{n}}">${{s?dot(s):''}}${{n}}</span>`;
-}}
-function render(data){{
-  document.getElementById('resultCount').textContent=`${{data.length}}건`;
+  return`<span class="chain-badge c-${t}" title="${n}">${s?dot(s):''}${n}</span>`;
+}
+function render(data){
+  document.getElementById('resultCount').textContent=`${data.length}건`;
   const tb=document.getElementById('tableBody');
-  if(!data.length){{tb.innerHTML='';document.getElementById('noData').style.display='block';return;}}
+  if(!data.length){tb.innerHTML='';document.getElementById('noData').style.display='block';return;}
   document.getElementById('noData').style.display='none';
-  tb.innerHTML=data.map(r=>{{
+  tb.innerHTML=data.map(r=>{
     const dd=dday(r.action_due,r.action_progress);
-    const pc=r.action_progress?`pb-${{r.action_progress}}`:'pb-empty';
+    const pc=r.action_progress?`pb-${r.action_progress}`:'pb-empty';
     const pt=r.action_progress||(r.capa_num?'ACTION 없음':'체인 진행중');
     // 체인 경로에 따라 다르게 표시
     const chainHtml = r.chain_type==='E→A'
-      ? `<div class="chain-row">${{badge(r.event_num,r.event_status,'event')}}</div>`
+      ? `<div class="chain-row">${badge(r.event_num,r.event_status,'event')}</div>`
       : `<div class="chain-row">
-          ${{badge(r.event_num,r.event_status,'event')}}
-          <span class="arrow">→</span>${{badge(r.dev_num,r.dev_status,'dev')}}
-          <span class="arrow">→</span>${{badge(r.issue_num,r.issue_status,'issue')}}
-          <span class="arrow">→</span>${{badge(r.capa_num,r.capa_status,'capa')}}
+          ${badge(r.event_num,r.event_status,'event')}
+          <span class="arrow">→</span>${badge(r.dev_num,r.dev_status,'dev')}
+          <span class="arrow">→</span>${badge(r.issue_num,r.issue_status,'issue')}
+          <span class="arrow">→</span>${badge(r.capa_num,r.capa_status,'capa')}
         </div>`;
     const dept = r.action_dept || (DEPT_MAP[r.assignee_id]||'');
-    return`<tr${{r.action_progress==='기한초과'?' class="overdue"':''}}>
-      <td style="white-space:nowrap;font-size:.78rem;color:#475569">${{r.event_create||'-'}}</td>
-      <td>${{chainHtml}}</td>
-      <td class="doc-num">${{r.action_num||'-'}}</td>
-      <td class="action-desc" title="${{(r.action_desc||'').replace(/"/g,'&quot;')}}">${{(r.action_desc||'').substring(0,50)||'-'}}</td>
-      <td class="assignee">${{r.assignee_name||'-'}}</td>
-      <td class="dept-text" title="${{dept}}">${{dept}}</td>
-      <td style="white-space:nowrap;font-size:.78rem">${{fmt(r.action_due)}}</td>
-      <td style="white-space:nowrap;font-size:.78rem">${{fmt(r.action_complete)}}</td>
-      <td><span class="prog-badge ${{pc}}">${{pt}}</span></td>
-      <td><span class="dday ${{dd.c}}">${{dd.t}}</span></td>
+    return`<tr${r.action_progress==='기한초과'?' class="overdue"':''}>
+      <td style="white-space:nowrap;font-size:.78rem;color:#475569">${r.event_create||'-'}</td>
+      <td>${chainHtml}</td>
+      <td class="doc-num">${r.action_num||'-'}</td>
+      <td class="action-desc" title="${(r.action_desc||'').replace(/"/g,'&quot;')}">${(r.action_desc||'').substring(0,50)||'-'}</td>
+      <td class="assignee">${r.assignee_name||'-'}</td>
+      <td class="dept-text" title="${dept}">${dept}</td>
+      <td style="white-space:nowrap;font-size:.78rem">${fmt(r.action_due)}</td>
+      <td style="white-space:nowrap;font-size:.78rem">${fmt(r.action_complete)}</td>
+      <td><span class="prog-badge ${pc}">${pt}</span></td>
+      <td><span class="dday ${dd.c}">${dd.t}</span></td>
     </tr>`;
-  }}).join('');
-}}
-function applyFilters(){{
+  }).join('');
+}
+function applyFilters(){
   const yr=document.getElementById('fYear').value;
   const pg=document.getElementById('fProgress').value;
   const st=document.getElementById('fChainStage').value;
   const q=document.getElementById('fSearch').value.toLowerCase();
-  filtered=DATA.filter(r=>{{
+  filtered=DATA.filter(r=>{
     if(yr&&!r.event_create.startsWith(yr))return false;
     if(pg&&r.action_progress!==pg)return false;
     if(st==='has_action'&&!r.action_num)return false;
     if(st==='no_action'&&r.action_num)return false;
     if(q&&![r.event_num,r.dev_num,r.issue_num,r.capa_num,r.action_num,r.event_title,r.action_desc,r.assignee_name].join(' ').toLowerCase().includes(q))return false;
     return true;
-  }});
+  });
   sortAndRender();
-}}
-function clearFilters(){{['fYear','fProgress','fChainStage'].forEach(i=>document.getElementById(i).value='');document.getElementById('fSearch').value='';applyFilters();}}
-function sortBy(k){{if(sortKey===k)_asc=!_asc;else{{sortKey=k;_asc=false;}}sortAndRender();}}
-function sortAndRender(){{
-  filtered.sort((a,b)=>{{
+}
+function clearFilters(){['fYear','fProgress','fChainStage'].forEach(i=>document.getElementById(i).value='');document.getElementById('fSearch').value='';applyFilters();}
+function sortBy(k){if(sortKey===k)_asc=!_asc;else{sortKey=k;_asc=false;}sortAndRender();}
+function sortAndRender(){
+  filtered.sort((a,b)=>{
     const va=sortKey==='dday_sort'?dday(a.action_due,a.action_progress).s:(a[sortKey]||'');
     const vb=sortKey==='dday_sort'?dday(b.action_due,b.action_progress).s:(b[sortKey]||'');
     return va<vb?(_asc?-1:1):va>vb?(_asc?1:-1):0;
-  }});
+  });
   render(filtered);
-}}
+}
 applyFilters();
-new Chart(document.getElementById('donutChart'),{{type:'doughnut',data:{{labels:['완료','진행중','기한초과'],datasets:[{{data:[488,20,12],backgroundColor:['#16a34a','#ea580c','#dc2626'],borderWidth:2,borderColor:'#fff'}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{position:'bottom',labels:{{font:{{size:11}},padding:10}}}}}}}}}});
-const mc={{}};
-DATA.forEach(r=>{{if(r.action_due&&r.action_due.length>=7){{const m=r.action_due.substring(0,7);mc[m]=mc[m]||{{d:0,p:0,o:0}};if(r.action_progress==='완료')mc[m].d++;else if(r.action_progress==='기한초과')mc[m].o++;else mc[m].p++;}}}} );
+new Chart(document.getElementById('donutChart'),{type:'doughnut',data:{labels:['완료','진행중','기한초과'],datasets:[{data:[488,20,12],backgroundColor:['#16a34a','#ea580c','#dc2626'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:10}}}}});
+const mc={};
+DATA.forEach(r=>{if(r.action_due&&r.action_due.length>=7){const m=r.action_due.substring(0,7);mc[m]=mc[m]||{d:0,p:0,o:0};if(r.action_progress==='완료')mc[m].d++;else if(r.action_progress==='기한초과')mc[m].o++;else mc[m].p++;}} );
 const ms=Object.keys(mc).sort().slice(-18);
-new Chart(document.getElementById('barChart'),{{type:'bar',data:{{labels:ms,datasets:[{{label:'완료',data:ms.map(m=>mc[m]?.d||0),backgroundColor:'#16a34a',borderRadius:3}},{{label:'진행중',data:ms.map(m=>mc[m]?.p||0),backgroundColor:'#ea580c',borderRadius:3}},{{label:'기한초과',data:ms.map(m=>mc[m]?.o||0),backgroundColor:'#dc2626',borderRadius:3}}]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{position:'top',labels:{{font:{{size:11}}}}}}}},scales:{{x:{{stacked:true,ticks:{{font:{{size:9}},maxRotation:45}}}},y:{{stacked:true,beginAtZero:true}}}}}}}});
+new Chart(document.getElementById('barChart'),{type:'bar',data:{labels:ms,datasets:[{label:'완료',data:ms.map(m=>mc[m]?.d||0),backgroundColor:'#16a34a',borderRadius:3},{label:'진행중',data:ms.map(m=>mc[m]?.p||0),backgroundColor:'#ea580c',borderRadius:3},{label:'기한초과',data:ms.map(m=>mc[m]?.o||0),backgroundColor:'#dc2626',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{size:11}}}},scales:{x:{stacked:true,ticks:{font:{size:9},maxRotation:45}},y:{stacked:true,beginAtZero:true}}}});
 </script>
 </body>
 </html>
