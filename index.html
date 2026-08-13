@@ -62,6 +62,14 @@ header .subtitle{font-size:0.7rem;color:#94a3b8;margin-top:1px;font-weight:400}
 .clear-btn:hover{background:#f8fafc;border-color:#a5b4fc;color:#6366f1}
 /* ── Legend ── */
 .legend{display:flex;gap:14px;margin-bottom:12px;flex-wrap:wrap;padding:0 2px}
+/* ── Month Pills ── */
+.month-fg{align-items:flex-start}
+.month-pills{display:flex;flex-wrap:wrap;gap:3px;align-items:center;padding-top:1px}
+.mpill input{display:none}
+.mpill span{display:inline-block;padding:3px 7px;border-radius:5px;font-size:.72rem;font-weight:600;cursor:pointer;border:1.5px solid #e2e8f0;color:#64748b;background:#fff;transition:all .15s;user-select:none;line-height:1.4}
+.mpill input:checked+span{background:#6366f1;color:#fff;border-color:#6366f1}
+.mpill:hover span{border-color:#a5b4fc}
+.month-all-btn{padding:3px 8px;border-radius:5px;font-size:.72rem;font-weight:600;cursor:pointer;border:1.5px solid #e2e8f0;color:#64748b;background:#f8fafc;transition:all .15s;user-select:none;line-height:1.4}
 .legend-item{display:flex;align-items:center;gap:5px;font-size:.71rem;font-weight:600;color:#64748b}
 .dot{width:8px;height:8px;border-radius:2px;display:inline-block}
 /* ── Table ── */
@@ -157,7 +165,7 @@ tbody tr.grp-cont.overdue{background:#fff5f5!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-08-13 16:37 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-08-13 16:54 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
@@ -228,14 +236,22 @@ tbody tr.grp-cont.overdue{background:#fff5f5!important}
           <option value="">전체</option><option value="2026">2026</option>
           <option value="2025">2025</option><option value="2024">2024</option>
         </select></div>
-      <div class="fg"><label>월</label>
-        <select id="fMonth" onchange="applyFilters()">
-          <option value="">전체</option>
-          <option value="01">1월</option><option value="02">2월</option><option value="03">3월</option>
-          <option value="04">4월</option><option value="05">5월</option><option value="06">6월</option>
-          <option value="07">7월</option><option value="08">8월</option><option value="09">9월</option>
-          <option value="10">10월</option><option value="11">11월</option><option value="12">12월</option>
-        </select></div>
+      <div class="fg month-fg"><label>월</label>
+        <div class="month-pills" id="fMonthGroup">
+          <span class="month-all-btn" onclick="toggleAllMonths()">전체</span>
+          <label class="mpill"><input type="checkbox" value="01" onchange="applyFilters()"><span>1</span></label>
+          <label class="mpill"><input type="checkbox" value="02" onchange="applyFilters()"><span>2</span></label>
+          <label class="mpill"><input type="checkbox" value="03" onchange="applyFilters()"><span>3</span></label>
+          <label class="mpill"><input type="checkbox" value="04" onchange="applyFilters()"><span>4</span></label>
+          <label class="mpill"><input type="checkbox" value="05" onchange="applyFilters()"><span>5</span></label>
+          <label class="mpill"><input type="checkbox" value="06" onchange="applyFilters()"><span>6</span></label>
+          <label class="mpill"><input type="checkbox" value="07" onchange="applyFilters()"><span>7</span></label>
+          <label class="mpill"><input type="checkbox" value="08" onchange="applyFilters()"><span>8</span></label>
+          <label class="mpill"><input type="checkbox" value="09" onchange="applyFilters()"><span>9</span></label>
+          <label class="mpill"><input type="checkbox" value="10" onchange="applyFilters()"><span>10</span></label>
+          <label class="mpill"><input type="checkbox" value="11" onchange="applyFilters()"><span>11</span></label>
+          <label class="mpill"><input type="checkbox" value="12" onchange="applyFilters()"><span>12</span></label>
+        </div></div>
       <div class="fg"><label>근본원인조사</label>
         <select id="fRootCause" onchange="applyFilters()">
           <option value="">전체</option>
@@ -355,13 +371,13 @@ function isInvDone(r){
 }
 function applyFilters(){
   const yr=document.getElementById('fYear').value;
-  const mo=document.getElementById('fMonth').value;
+  const mos=Array.from(document.querySelectorAll('#fMonthGroup input:checked')).map(c=>c.value);
   const rc=document.getElementById('fRootCause').value;
   const as=document.getElementById('fActionStatus').value;
   const q=document.getElementById('fSearch').value.toLowerCase();
   filtered=DATA.filter(r=>{
     if(yr&&!r.event_create.startsWith(yr))return false;
-    if(mo&&(r.event_create||'').substring(5,7)!==mo)return false;
+    if(mos.length>0&&!mos.includes((r.event_create||'').substring(5,7)))return false;
     if(rc==='done'&&!isInvDone(r))return false;
     if(rc==='ongoing'&&isInvDone(r))return false;
     if(as==='capa_none'){
@@ -388,7 +404,13 @@ function applyFilters(){
   });
   sortAndRender();
 }
-function clearFilters(){['fYear','fMonth','fRootCause','fActionStatus'].forEach(i=>document.getElementById(i).value='');document.getElementById('fSearch').value='';applyFilters();}
+function toggleAllMonths(){
+  const cbs=document.querySelectorAll('#fMonthGroup input');
+  const anyChecked=Array.from(cbs).some(c=>c.checked);
+  cbs.forEach(c=>c.checked=!anyChecked);
+  applyFilters();
+}
+function clearFilters(){['fYear','fRootCause','fActionStatus'].forEach(i=>document.getElementById(i).value='');document.querySelectorAll('#fMonthGroup input').forEach(c=>c.checked=false);document.getElementById('fSearch').value='';applyFilters();}
 function sortBy(k){if(sortKey===k)_asc=!_asc;else{sortKey=k;_asc=false;}sortAndRender();}
 function sortAndRender(){
   filtered.sort((a,b)=>{
