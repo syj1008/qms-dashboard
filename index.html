@@ -105,7 +105,9 @@ td{padding:10px 14px;vertical-align:middle}
 .dday.over{color:#ef4444}.dday.soon{color:#f97316}.dday.ok{color:#22c55e}.dday.done{color:#94a3b8}
 /* ── Cell Types ── */
 .doc-num{font-family:'SF Mono',monospace;font-size:.72rem;color:#6366f1;font-weight:700}
-.action-desc{max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#334155}
+.action-desc{max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#334155;position:relative;cursor:default}
+.action-desc[data-tip]:hover::after{content:attr(data-tip);position:absolute;top:calc(100% + 6px);left:0;background:#1e293b;color:#f1f5f9;padding:8px 12px;border-radius:8px;font-size:.76rem;font-weight:400;white-space:pre-wrap;min-width:220px;max-width:380px;z-index:999;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.35);line-height:1.6;word-break:break-all}
+.action-desc[data-tip]:hover::before{content:'';position:absolute;top:calc(100% + 1px);left:16px;border:5px solid transparent;border-bottom-color:#1e293b;z-index:999}
 .dept-text{font-size:.71rem;color:#64748b;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#f8fafc;padding:2px 6px;border-radius:4px}
 .assignee{font-size:.78rem;font-weight:600;color:#1e293b}
 .no-data{text-align:center;padding:60px;color:#cbd5e1}
@@ -116,7 +118,7 @@ tbody tr.grp-cont{background:#f8f9ff!important}
 tbody tr.grp-cont td:first-child{border-left:3px solid #6366f1}
 tbody tr.grp-cont:hover{background:#f0f2ff!important}
 tbody tr.grp-cont.overdue{background:#fff5f5!important}
-.chain-continuation{display:flex;align-items:center;gap:5px;color:#94a3b8;font-size:.7rem;padding-left:4px}
+.chain-continuation{display:flex;align-items:center;justify-content:flex-end;gap:5px;color:#94a3b8;font-size:.7rem;padding-right:2px}
 .chain-continuation .cont-arrow{font-size:1rem;color:#a5b4fc}
 /* ── Date cell ── */
 .date-cell{font-size:.74rem;color:#64748b;white-space:nowrap}
@@ -139,7 +141,7 @@ tbody tr.grp-cont.overdue{background:#fff5f5!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-08-13 14:25 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-08-13 14:34 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
@@ -312,7 +314,8 @@ function render(data){
       <td class="date-cell">${r.event_create||'-'}</td>
       <td>${chainHtml}</td>
       <td class="doc-num">${r.action_num||'-'}</td>
-      <td class="action-desc" title="${(r.action_desc||'').replace(/"/g,'&quot;')}">${(r.action_desc||'').substring(0,50)||'-'}</td>
+      <td class="action-desc" data-tip="${(r.action_desc||'').replace(/"/g,'&quot;').replace(/
+/g,' ')}">${(r.action_desc||'').substring(0,50)||'-'}</td>
       <td class="assignee">${r.assignee_name||'-'}</td>
       <td class="dept-text" title="${dept}">${dept}</td>
       <td style="white-space:nowrap;font-size:.78rem">${fmt(r.action_due)}</td>
