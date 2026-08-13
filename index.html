@@ -47,6 +47,9 @@ tbody tr.overdue{background:#fff5f5}
 td{padding:9px 12px;vertical-align:middle}
 .chain-row{display:flex;align-items:center;gap:4px;font-size:.72rem}
 .chain-badge{padding:2px 6px;border-radius:4px;font-weight:700;font-size:.68rem;white-space:nowrap}
+.chain-badge[data-tip]{position:relative;cursor:help}
+.chain-badge[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);background:#1e293b;color:#f1f5f9;padding:6px 10px;border-radius:7px;font-size:.73rem;font-weight:400;white-space:normal;min-width:180px;max-width:300px;z-index:999;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.35);line-height:1.5;word-break:break-all}
+.chain-badge[data-tip]:hover::before{content:'';position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1e293b;z-index:999}
 .c-event{background:#dbeafe;color:#1d4ed8}.c-dev{background:#f3e8ff;color:#7c3aed}
 .c-issue{background:#dcfce7;color:#15803d}.c-capa{background:#fef9c3;color:#854d0e}
 .arrow{color:#94a3b8}
@@ -74,7 +77,7 @@ td{padding:9px 12px;vertical-align:middle}
     <h1>QMS HSP 진행 현황 대시보드</h1>
     <div class="subtitle">EVENT → DEV → ISSUE → CAPA → ACTION 체인 관리 (화순공장, 2024~현재)</div>
   </div>
-  <div class="hdr-right">데이터 기준: 2026-08-13 13:57 KST<br>자동 업데이트: 매일 09:00</div>
+  <div class="hdr-right">데이터 기준: 2026-08-13 14:00 KST<br>자동 업데이트: 매일 09:00</div>
 </header>
 <div class="wrap">
   <div class="cards">
@@ -157,9 +160,10 @@ function dday(due,p){
   return d<0?{t:`D+${Math.abs(d)}`,c:'over',s:d}:d<=7?{t:`D-${d}`,c:'soon',s:d}:{t:`D-${d}`,c:'ok',s:d};
 }
 function dot(s){return`<span class="status-dot s-${s}"></span>`;}
-function badge(n,s,t){
+function badge(n,s,t,tip){
   if(!n)return`<span style="color:#cbd5e1">-</span>`;
-  return`<span class="chain-badge c-${t}" title="${n}">${s?dot(s):''}${n}</span>`;
+  const tipAttr=tip?` data-tip="${tip.replace(/"/g,'&quot;')}"`:` title="${n}"`;
+  return`<span class="chain-badge c-${t}"${tipAttr}>${s?dot(s):''}${n}</span>`;
 }
 function render(data){
   document.getElementById('resultCount').textContent=`${data.length}건`;
@@ -172,9 +176,9 @@ function render(data){
     const pt=r.action_progress||(r.capa_num?'ACTION 없음':'체인 진행중');
     // 체인 경로에 따라 다르게 표시
     const chainHtml = r.chain_type==='E→A'
-      ? `<div class="chain-row">${badge(r.event_num,r.event_status,'event')}</div>`
+      ? `<div class="chain-row">${badge(r.event_num,r.event_status,'event',r.event_title)}</div>`
       : `<div class="chain-row">
-          ${badge(r.event_num,r.event_status,'event')}
+          ${badge(r.event_num,r.event_status,'event',r.event_title)}
           <span class="arrow">→</span>${badge(r.dev_num,r.dev_status,'dev')}
           <span class="arrow">→</span>${badge(r.issue_num,r.issue_status,'issue')}
           <span class="arrow">→</span>${badge(r.capa_num,r.capa_status,'capa')}
