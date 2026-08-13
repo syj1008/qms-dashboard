@@ -6,86 +6,172 @@
 <title>QMS HSP 진행 현황 | E-D-I-C-A 체인 관리</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Malgun Gothic','Segoe UI',sans-serif;background:#f0f4f8;color:#1e293b;font-size:14px}
-header{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 60%,#0369a1 100%);color:#fff;padding:18px 28px;display:flex;justify-content:space-between;align-items:center}
-header h1{font-size:1.35rem;font-weight:800}
-header .subtitle{font-size:0.75rem;opacity:.65;margin-top:2px}
-.hdr-right{font-size:0.72rem;opacity:.55;text-align:right;line-height:1.8}
-.wrap{max-width:1500px;margin:0 auto;padding:18px 20px}
-.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
-.card{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 6px rgba(0,0,0,.08);border-top:3px solid transparent}
-.card.blue{border-color:#0369a1}.card.green{border-color:#16a34a}
-.card.orange{border-color:#ea580c}.card.red{border-color:#dc2626}.card.gray{border-color:#94a3b8}
-.card-label{font-size:.7rem;font-weight:700;color:#64748b;text-transform:uppercase;margin-bottom:6px}
-.card-val{font-size:1.9rem;font-weight:900}
-.card.blue .card-val{color:#0369a1}.card.green .card-val{color:#16a34a}
-.card.orange .card-val{color:#ea580c}.card.red .card-val{color:#dc2626}.card.gray .card-val{color:#64748b}
-.card-sub{font-size:.7rem;color:#94a3b8;margin-top:2px}
-.charts-row{display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-bottom:18px}
-.chart-card{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 6px rgba(0,0,0,.08)}
-.chart-card h3{font-size:.8rem;font-weight:700;color:#475569;margin-bottom:12px}
+body{font-family:'Inter','Malgun Gothic','Segoe UI',sans-serif;background:#f1f5f9;color:#1e293b;font-size:14px;-webkit-font-smoothing:antialiased}
+/* ── Header ── */
+header{background:#fff;border-bottom:1px solid #e2e8f0;padding:0 28px;height:60px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.hdr-left{display:flex;align-items:center;gap:14px}
+.hdr-logo{width:34px;height:34px;background:linear-gradient(135deg,#6366f1,#0ea5e9);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:800;flex-shrink:0}
+header h1{font-size:1.05rem;font-weight:700;color:#0f172a;letter-spacing:-.3px}
+header .subtitle{font-size:0.7rem;color:#94a3b8;margin-top:1px;font-weight:400}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.hdr-badge{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:5px 12px;font-size:.72rem;color:#64748b;font-weight:500}
+.hdr-badge span{color:#6366f1;font-weight:700}
+/* ── Layout ── */
+.wrap{max-width:1560px;margin:0 auto;padding:20px 24px}
+/* ── Summary Cards ── */
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px}
+.card{background:#fff;border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);position:relative;overflow:hidden;transition:box-shadow .2s}
+.card:hover{box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px}
+.card.blue .card-icon{background:#eff6ff;color:#3b82f6}
+.card.purple .card-icon{background:#f5f3ff;color:#7c3aed}
+.card.green .card-icon{background:#f0fdf4;color:#16a34a}
+.card.orange .card-icon{background:#fff7ed;color:#ea580c}
+.card.red .card-icon{background:#fef2f2;color:#dc2626}
+.card-label{font-size:.68rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.card-val{font-size:2rem;font-weight:800;letter-spacing:-1px;line-height:1}
+.card.blue .card-val{color:#2563eb}.card.purple .card-val{color:#7c3aed}
+.card.green .card-val{color:#16a34a}.card.orange .card-val{color:#ea580c}.card.red .card-val{color:#dc2626}
+.card-sub{font-size:.68rem;color:#cbd5e1;margin-top:5px;font-weight:500}
+.card-accent{position:absolute;right:-10px;bottom:-10px;width:70px;height:70px;border-radius:50%;opacity:.07}
+.card.blue .card-accent{background:#3b82f6}.card.purple .card-accent{background:#7c3aed}
+.card.green .card-accent{background:#16a34a}.card.orange .card-accent{background:#ea580c}.card.red .card-accent{background:#dc2626}
+/* ── Charts ── */
+.charts-row{display:grid;grid-template-columns:1fr 2fr;gap:14px;margin-bottom:14px}
+.chart-card{background:#fff;border-radius:14px;padding:20px 22px;box-shadow:0 1px 3px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04)}
+.chart-card h3{font-size:.8rem;font-weight:700;color:#334155;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.chart-card h3::before{content:'';width:3px;height:14px;background:linear-gradient(#6366f1,#0ea5e9);border-radius:2px;display:inline-block}
 .chart-wrap{position:relative;height:200px}
-.filter-bar{background:#fff;border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:0 1px 6px rgba(0,0,0,.08);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.filter-bar select,.filter-bar input{padding:7px 10px;border:1px solid #e2e8f0;border-radius:7px;font-size:.82rem;outline:none;background:#fff}
-.filter-bar input{flex:1;min-width:180px}
-.fg{display:flex;align-items:center;gap:5px}
-.fg label{font-size:.72rem;font-weight:700;color:#64748b;white-space:nowrap}
-.result-count{margin-left:auto;font-size:.78rem;color:#64748b;font-weight:600}
-.clear-btn{padding:7px 12px;border:1px solid #e2e8f0;border-radius:7px;background:#fff;font-size:.8rem;cursor:pointer;color:#64748b}
-.legend{display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:.72rem;font-weight:600;color:#475569}
-.dot{width:10px;height:10px;border-radius:2px;display:inline-block}
-.table-wrap{background:#fff;border-radius:10px;box-shadow:0 1px 6px rgba(0,0,0,.08);overflow:hidden;margin-top:10px}
-.tbl-scroll{overflow-x:auto;max-height:580px;overflow-y:auto}
-table{width:100%;border-collapse:collapse;font-size:.8rem}
-thead th{background:#0f172a;color:#fff;padding:10px 12px;text-align:left;font-size:.72rem;font-weight:600;position:sticky;top:0;z-index:2;cursor:pointer;white-space:nowrap}
-thead th:hover{background:#1e3a5f}
-tbody tr{border-bottom:1px solid #f1f5f9;transition:background .1s}
-tbody tr:hover{background:#f8fafc}
-tbody tr.overdue{background:#fff5f5}
-td{padding:9px 12px;vertical-align:middle}
-.chain-row{display:flex;align-items:center;gap:4px;font-size:.72rem}
-.chain-badge{padding:2px 6px;border-radius:4px;font-weight:700;font-size:.68rem;white-space:nowrap}
+/* ── Filter Bar ── */
+.filter-section{background:#fff;border-radius:14px;padding:16px 20px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04)}
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.fg{display:flex;flex-direction:column;gap:3px}
+.fg label{font-size:.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;padding-left:2px}
+.filter-bar select{padding:7px 28px 7px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.8rem;outline:none;background:#fff;color:#334155;font-family:inherit;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;transition:border-color .2s,box-shadow .2s}
+.filter-bar select:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+.filter-bar select:hover{border-color:#a5b4fc}
+.search-wrap{flex:1;min-width:200px;position:relative}
+.search-wrap::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:12px;pointer-events:none}
+.filter-bar input{width:100%;padding:7px 10px 7px 30px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.8rem;outline:none;background:#fff;font-family:inherit;transition:border-color .2s,box-shadow .2s}
+.filter-bar input:focus{border-color:#6366f1;box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+.result-count{margin-left:auto;background:#f8fafc;border:1px solid #e2e8f0;border-radius:20px;padding:5px 12px;font-size:.72rem;color:#6366f1;font-weight:700}
+.clear-btn{padding:7px 14px;border:1.5px solid #e2e8f0;border-radius:8px;background:#fff;font-size:.78rem;cursor:pointer;color:#64748b;font-family:inherit;font-weight:500;transition:all .2s}
+.clear-btn:hover{background:#f8fafc;border-color:#a5b4fc;color:#6366f1}
+/* ── Legend ── */
+.legend{display:flex;gap:14px;margin-bottom:12px;flex-wrap:wrap;padding:0 2px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:.71rem;font-weight:600;color:#64748b}
+.dot{width:8px;height:8px;border-radius:2px;display:inline-block}
+/* ── Table ── */
+.table-section{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);overflow:hidden}
+.table-header{padding:16px 20px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f1f5f9}
+.table-title{font-size:.85rem;font-weight:700;color:#0f172a;padding-bottom:14px}
+.tbl-scroll{overflow-x:auto;max-height:560px;overflow-y:auto}
+table{width:100%;border-collapse:collapse;font-size:.79rem}
+thead th{background:#f8fafc;color:#64748b;padding:10px 14px;text-align:left;font-size:.68rem;font-weight:700;position:sticky;top:0;z-index:2;cursor:pointer;white-space:nowrap;border-bottom:2px solid #e2e8f0;letter-spacing:.3px;text-transform:uppercase}
+thead th:hover{color:#6366f1;background:#f1f5f9}
+thead th.sort-active{color:#6366f1}
+tbody tr{border-bottom:1px solid #f8fafc;transition:background .15s}
+tbody tr:hover{background:#fafbff}
+tbody tr:nth-child(even){background:#fafcff}
+tbody tr:nth-child(even):hover{background:#f5f7ff}
+tbody tr.overdue{background:#fff8f8}
+tbody tr.overdue:hover{background:#fff0f0}
+td{padding:10px 14px;vertical-align:middle}
+/* ── Chain Badges ── */
+.chain-row{display:flex;align-items:center;gap:3px;font-size:.71rem}
+.chain-badge{padding:2px 7px;border-radius:5px;font-weight:700;font-size:.67rem;white-space:nowrap;letter-spacing:.2px}
 .chain-badge[data-tip]{position:relative;cursor:help}
 .chain-badge[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);background:#1e293b;color:#f1f5f9;padding:6px 10px;border-radius:7px;font-size:.73rem;font-weight:400;white-space:normal;min-width:180px;max-width:300px;z-index:999;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.35);line-height:1.5;word-break:break-all}
 .chain-badge[data-tip]:hover::before{content:'';position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1e293b;z-index:999}
-.c-event{background:#dbeafe;color:#1d4ed8}.c-dev{background:#f3e8ff;color:#7c3aed}
-.c-issue{background:#dcfce7;color:#15803d}.c-capa{background:#fef9c3;color:#854d0e}
-.arrow{color:#94a3b8}
-.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px}
-.s-Release{background:#16a34a}.s-Draft{background:#f59e0b}.s-Abort{background:#ef4444}
-.prog-badge{padding:3px 10px;border-radius:12px;font-size:.72rem;font-weight:700;display:inline-block;white-space:nowrap}
+.c-event{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
+.c-dev{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
+.c-issue{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.c-capa{background:#fffbeb;color:#b45309;border:1px solid #fde68a}
+.arrow{color:#cbd5e1;font-size:.65rem}
+/* ── Status Dots ── */
+.status-dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:3px;vertical-align:middle}
+.s-Release{background:#22c55e}.s-Draft{background:#f59e0b}.s-Abort{background:#f43f5e}
+/* ── Progress Badges ── */
+.prog-badge{padding:3px 10px;border-radius:20px;font-size:.69rem;font-weight:700;display:inline-block;white-space:nowrap;letter-spacing:.3px}
 .pb-완료{background:#dcfce7;color:#15803d}
 .pb-진행중{background:#fff7ed;color:#c2410c}
 .pb-기한초과{background:#fee2e2;color:#991b1b;animation:pulse 2s infinite}
 .pb-empty{background:#f1f5f9;color:#94a3b8}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-.dday{font-size:.75rem;font-weight:700}
-.dday.over{color:#dc2626}.dday.soon{color:#ea580c}.dday.ok{color:#16a34a}.dday.done{color:#64748b}
-.doc-num{font-family:monospace;font-size:.75rem;color:#0369a1;font-weight:700}
-.action-desc{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#334155}
-.dept-text{font-size:.72rem;color:#64748b;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.assignee{font-size:.78rem;font-weight:600;color:#334155}
-.no-data{text-align:center;padding:40px;color:#94a3b8}
-@media(max-width:900px){.cards{grid-template-columns:repeat(3,1fr)}.charts-row{grid-template-columns:1fr}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+/* ── D-Day ── */
+.dday{font-size:.73rem;font-weight:700;letter-spacing:.2px}
+.dday.over{color:#ef4444}.dday.soon{color:#f97316}.dday.ok{color:#22c55e}.dday.done{color:#94a3b8}
+/* ── Cell Types ── */
+.doc-num{font-family:'SF Mono',monospace;font-size:.72rem;color:#6366f1;font-weight:700}
+.action-desc{max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#334155}
+.dept-text{font-size:.71rem;color:#64748b;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#f8fafc;padding:2px 6px;border-radius:4px}
+.assignee{font-size:.78rem;font-weight:600;color:#1e293b}
+.no-data{text-align:center;padding:60px;color:#cbd5e1}
+.no-data::before{content:'📋';display:block;font-size:2.5rem;margin-bottom:12px}
+/* ── Date cell ── */
+.date-cell{font-size:.74rem;color:#64748b;white-space:nowrap}
+/* ── Scrollbar ── */
+.tbl-scroll::-webkit-scrollbar{width:5px;height:5px}
+.tbl-scroll::-webkit-scrollbar-track{background:#f8fafc}
+.tbl-scroll::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:10px}
+.tbl-scroll::-webkit-scrollbar-thumb:hover{background:#cbd5e1}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:768px){.cards{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.wrap{padding:12px}}
 </style>
 </head>
 <body>
 <header>
-  <div>
-    <h1>QMS HSP 진행 현황 대시보드</h1>
-    <div class="subtitle">EVENT → DEV → ISSUE → CAPA → ACTION 체인 관리 (화순공장, 2024~현재)</div>
+  <div class="hdr-left">
+    <div class="hdr-logo">Q</div>
+    <div>
+      <h1>QMS 진행 현황 — 화순공장 (HSP)</h1>
+      <div class="subtitle">EVENT → DEV → ISSUE → CAPA → ACTION &nbsp;|&nbsp; 2024년 ~ 현재</div>
+    </div>
   </div>
-  <div class="hdr-right">데이터 기준: 2026-08-13 14:00 KST<br>자동 업데이트: 매일 09:00</div>
+  <div class="hdr-right">
+    <div class="hdr-badge">기준일 <span>2026-08-13 14:16 KST</span></div>
+    <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
+  </div>
 </header>
 <div class="wrap">
   <div class="cards">
-    <div class="card blue"><div class="card-label">총 이벤트 체인</div><div class="card-val">538</div><div class="card-sub">EVENT (HSP 2024~현재)</div></div>
-    <div class="card gray"><div class="card-label">CAPA 체인 수</div><div class="card-val">225</div><div class="card-sub">ACTION 포함 CAPA</div></div>
-    <div class="card green"><div class="card-label">ACTION 완료</div><div class="card-val">488</div><div class="card-sub">Release 처리 완료</div></div>
-    <div class="card orange"><div class="card-label">ACTION 진행중</div><div class="card-val">20</div><div class="card-sub">기한 내 처리 중</div></div>
-    <div class="card red"><div class="card-label">ACTION 기한초과</div><div class="card-val">12</div><div class="card-sub">즉시 조치 필요</div></div>
+    <div class="card blue">
+      <div class="card-icon">📋</div>
+      <div class="card-label">총 이벤트</div>
+      <div class="card-val">538</div>
+      <div class="card-sub">HSP 2024년~현재</div>
+      <div class="card-accent"></div>
+    </div>
+    <div class="card purple">
+      <div class="card-icon">🔗</div>
+      <div class="card-label">CAPA 체인</div>
+      <div class="card-val">225</div>
+      <div class="card-sub">ACTION 포함 CAPA</div>
+      <div class="card-accent"></div>
+    </div>
+    <div class="card green">
+      <div class="card-icon">✅</div>
+      <div class="card-label">ACTION 완료</div>
+      <div class="card-val">488</div>
+      <div class="card-sub">처리 완료</div>
+      <div class="card-accent"></div>
+    </div>
+    <div class="card orange">
+      <div class="card-icon">⏳</div>
+      <div class="card-label">ACTION 진행중</div>
+      <div class="card-val">20</div>
+      <div class="card-sub">기한 내 처리 중</div>
+      <div class="card-accent"></div>
+    </div>
+    <div class="card red">
+      <div class="card-icon">🚨</div>
+      <div class="card-label">ACTION 기한초과</div>
+      <div class="card-val">12</div>
+      <div class="card-sub">즉시 조치 필요</div>
+      <div class="card-accent"></div>
+    </div>
   </div>
   <div class="charts-row">
     <div class="chart-card"><h3>ACTION 처리 현황</h3><div class="chart-wrap"><canvas id="donutChart"></canvas></div></div>
@@ -95,26 +181,41 @@ td{padding:9px 12px;vertical-align:middle}
     <h3 id="teamChartTitle">팀별 EVENT 발생 현황</h3>
     <div class="chart-wrap" style="height:260px"><canvas id="teamChart"></canvas></div>
   </div>
-  <div class="filter-bar">
-    <div class="fg"><label>연도</label>
-      <select id="fYear" onchange="applyFilters()">
-        <option value="">전체</option><option value="2026">2026</option>
-        <option value="2025">2025</option><option value="2024">2024</option>
-      </select></div>
-    <div class="fg"><label>ACTION 상태</label>
-      <select id="fProgress" onchange="applyFilters()">
-        <option value="">전체</option><option value="기한초과">기한초과</option>
-        <option value="진행중">진행중</option><option value="완료">완료</option>
-      </select></div>
-    <div class="fg"><label>체인 단계</label>
-      <select id="fChainStage" onchange="applyFilters()">
-        <option value="">전체</option>
-        <option value="has_action">ACTION 있음</option>
-        <option value="no_action">CAPA 미발생</option>
-      </select></div>
-    <input type="text" id="fSearch" placeholder="문서번호, 제목, 담당자 검색..." oninput="applyFilters()">
-    <button class="clear-btn" onclick="clearFilters()">초기화</button>
-    <span class="result-count" id="resultCount"></span>
+  <div class="filter-section">
+    <div class="filter-bar">
+      <div class="fg"><label>연도</label>
+        <select id="fYear" onchange="applyFilters()">
+          <option value="">전체</option><option value="2026">2026</option>
+          <option value="2025">2025</option><option value="2024">2024</option>
+        </select></div>
+      <div class="fg"><label>월</label>
+        <select id="fMonth" onchange="applyFilters()">
+          <option value="">전체</option>
+          <option value="01">1월</option><option value="02">2월</option><option value="03">3월</option>
+          <option value="04">4월</option><option value="05">5월</option><option value="06">6월</option>
+          <option value="07">7월</option><option value="08">8월</option><option value="09">9월</option>
+          <option value="10">10월</option><option value="11">11월</option><option value="12">12월</option>
+        </select></div>
+      <div class="fg"><label>근본원인조사</label>
+        <select id="fRootCause" onchange="applyFilters()">
+          <option value="">전체</option>
+          <option value="done">조사완료</option>
+          <option value="ongoing">조사중</option>
+        </select></div>
+      <div class="fg"><label>ACTION 완료여부</label>
+        <select id="fActionStatus" onchange="applyFilters()">
+          <option value="">전체</option>
+          <option value="capa_none">CAPA 미발생</option>
+          <option value="진행중">진행중</option>
+          <option value="기한초과">기한초과</option>
+          <option value="완료">완료</option>
+        </select></div>
+      <div class="search-wrap">
+        <input type="text" id="fSearch" placeholder="문서번호, 제목, 담당자 검색..." oninput="applyFilters()">
+      </div>
+      <button class="clear-btn" onclick="clearFilters()">초기화</button>
+      <span class="result-count" id="resultCount"></span>
+    </div>
   </div>
   <div class="legend">
     <span class="legend-item"><span class="dot" style="background:#1d4ed8"></span>EVENT</span>
@@ -124,7 +225,8 @@ td{padding:9px 12px;vertical-align:middle}
     <span class="legend-item" style="margin-left:10px"><span class="status-dot s-Release"></span>Release</span>
     <span class="legend-item"><span class="status-dot s-Draft"></span>Draft</span>
   </div>
-  <div class="table-wrap">
+  <div class="table-section">
+    <div class="table-header"><div class="table-title">ACTION 목록</div></div>
     <div class="tbl-scroll">
       <table>
         <thead><tr>
@@ -198,22 +300,48 @@ function render(data){
     </tr>`;
   }).join('');
 }
+function isInvDone(r){
+  if(r.chain_type==='E→A') return true;
+  if(r.issue_num) return true;
+  if(!r.issue_num&&(r.dev_status==='Release'||r.dev_status==='Abort')) return true;
+  return false;
+}
 function applyFilters(){
   const yr=document.getElementById('fYear').value;
-  const pg=document.getElementById('fProgress').value;
-  const st=document.getElementById('fChainStage').value;
+  const mo=document.getElementById('fMonth').value;
+  const rc=document.getElementById('fRootCause').value;
+  const as=document.getElementById('fActionStatus').value;
   const q=document.getElementById('fSearch').value.toLowerCase();
   filtered=DATA.filter(r=>{
     if(yr&&!r.event_create.startsWith(yr))return false;
-    if(pg&&r.action_progress!==pg)return false;
-    if(st==='has_action'&&!r.action_num)return false;
-    if(st==='no_action'&&r.action_num)return false;
+    if(mo&&(r.event_create||'').substring(5,7)!==mo)return false;
+    if(rc==='done'&&!isInvDone(r))return false;
+    if(rc==='ongoing'&&isInvDone(r))return false;
+    if(as==='capa_none'){
+      if(r.chain_type==='E→A')return false;
+      if(!r.issue_num||r.capa_num)return false;
+    }
+    if(as==='진행중'){
+      const ok=(r.chain_type==='E→A'&&r.action_num&&r.action_progress==='진행중')
+             ||(r.chain_type!=='E→A'&&r.issue_num&&r.capa_num&&r.action_num&&r.action_progress==='진행중');
+      if(!ok)return false;
+    }
+    if(as==='기한초과'){
+      const ok=(r.chain_type==='E→A'&&r.action_num&&r.action_progress==='기한초과')
+             ||(r.chain_type!=='E→A'&&r.issue_num&&r.capa_num&&r.action_num&&r.action_progress==='기한초과');
+      if(!ok)return false;
+    }
+    if(as==='완료'){
+      const ok=(r.chain_type==='E→A'&&r.action_num&&r.action_progress==='완료')
+             ||(r.chain_type!=='E→A'&&r.issue_num&&r.capa_num&&r.action_num&&r.action_progress==='완료');
+      if(!ok)return false;
+    }
     if(q&&![r.event_num,r.dev_num,r.issue_num,r.capa_num,r.action_num,r.event_title,r.action_desc,r.assignee_name].join(' ').toLowerCase().includes(q))return false;
     return true;
   });
   sortAndRender();
 }
-function clearFilters(){['fYear','fProgress','fChainStage'].forEach(i=>document.getElementById(i).value='');document.getElementById('fSearch').value='';applyFilters();}
+function clearFilters(){['fYear','fMonth','fRootCause','fActionStatus'].forEach(i=>document.getElementById(i).value='');document.getElementById('fSearch').value='';applyFilters();}
 function sortBy(k){if(sortKey===k)_asc=!_asc;else{sortKey=k;_asc=false;}sortAndRender();}
 function sortAndRender(){
   filtered.sort((a,b)=>{
