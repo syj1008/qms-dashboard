@@ -20,7 +20,7 @@ header .subtitle{font-size:0.7rem;color:#94a3b8;margin-top:1px;font-weight:400}
 .hdr-badge{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:5px 12px;font-size:.72rem;color:#64748b;font-weight:500}
 .hdr-badge span{color:#6366f1;font-weight:700}
 /* ── Layout ── */
-.wrap{max-width:1560px;margin:0 auto;padding:20px 24px}
+.wrap{max-width:1560px;margin:0 auto;padding:20px 24px;min-width:0}
 /* ── Summary Cards ── */
 .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px}
 .card{background:#fff;border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);position:relative;overflow:hidden;transition:box-shadow .2s}
@@ -44,7 +44,7 @@ header .subtitle{font-size:0.7rem;color:#94a3b8;margin-top:1px;font-weight:400}
 .chart-card{background:#fff;border-radius:14px;padding:20px 22px;box-shadow:0 1px 3px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04)}
 .chart-card h3{font-size:.8rem;font-weight:700;color:#334155;margin-bottom:14px;display:flex;align-items:center;gap:6px}
 .chart-card h3::before{content:'';width:3px;height:14px;background:linear-gradient(#6366f1,#0ea5e9);border-radius:2px;display:inline-block}
-.chart-wrap{position:relative;height:200px}
+.chart-wrap{position:relative;height:clamp(150px,18vw,240px)}
 /* ── Filter Bar ── */
 .filter-section{background:#fff;border-radius:14px;padding:16px 20px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04)}
 .filter-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
@@ -79,11 +79,11 @@ header .subtitle{font-size:0.7rem;color:#94a3b8;margin-top:1px;font-weight:400}
 .legend-item{display:flex;align-items:center;gap:5px;font-size:.71rem;font-weight:600;color:#64748b}
 .dot{width:8px;height:8px;border-radius:2px;display:inline-block}
 /* ── Table ── */
-.table-section{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04)}
+.table-section{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);min-width:0;overflow:hidden}
 .table-header{padding:16px 20px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f1f5f9}
 .table-title{font-size:.85rem;font-weight:700;color:#0f172a;padding-bottom:14px}
-.tbl-scroll{overflow-x:auto;max-height:560px;overflow-y:auto}
-table{width:max-content;min-width:100%;border-collapse:collapse;font-size:.79rem;table-layout:auto}
+.tbl-scroll{overflow-x:auto;overflow-y:auto;max-height:560px;-webkit-overflow-scrolling:touch}
+table{width:max-content;min-width:min(100%,950px);border-collapse:collapse;font-size:.79rem;table-layout:auto}
 thead th{background:#f8fafc;color:#64748b;padding:10px 14px;text-align:left;font-size:.68rem;font-weight:700;position:sticky;top:0;z-index:2;cursor:pointer;white-space:nowrap;border-bottom:2px solid #e2e8f0;letter-spacing:.3px;text-transform:uppercase}
 thead th:hover{color:#6366f1;background:#f1f5f9}
 thead th.sort-active{color:#6366f1}
@@ -171,7 +171,7 @@ tbody tr.grp-cont.overdue{background:#fff5f5!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-08-13 17:27 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-08-13 17:32 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
@@ -232,7 +232,7 @@ tbody tr.grp-cont.overdue{background:#fff5f5!important}
     <div class="chart-card"><h3 id="barChartTitle">월별 ACTION 처리 현황</h3><div class="chart-wrap"><canvas id="barChart"></canvas></div></div>
     <div class="chart-card">
       <h3 id="teamChartTitle">팀별 EVENT 발생 현황</h3>
-      <div class="chart-wrap" style="height:200px"><canvas id="teamChart"></canvas></div>
+      <div class="chart-wrap"><canvas id="teamChart"></canvas></div>
     </div>
   </div>
   <div class="filter-section">
