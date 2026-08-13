@@ -141,7 +141,7 @@ tbody tr.grp-cont.overdue{background:#fff5f5!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-08-13 15:03 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-08-13 15:07 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
@@ -381,7 +381,17 @@ function sortAndRender(){
   });
   render(filtered);
 }
-applyFilters();
+// 전역 에러 핸들러
+window.onerror=function(msg,src,line,col,err){
+  const tb=document.getElementById('tableBody');
+  if(tb)tb.innerHTML=`<tr><td colspan="10" style="color:red;padding:20px;font-size:.9rem">⚠️ JS 오류 (line ${line}): ${msg}</td></tr>`;
+  return false;
+};
+try{applyFilters();}catch(e){
+  const tb=document.getElementById('tableBody');
+  if(tb)tb.innerHTML=`<tr><td colspan="10" style="color:red;padding:20px;font-size:.9rem">⚠️ applyFilters 오류: ${e.message}</td></tr>`;
+  console.error(e);
+}
 new Chart(document.getElementById('donutChart'),{type:'doughnut',data:{labels:['완료','진행중','기한초과'],datasets:[{data:[488,20,12],backgroundColor:['#16a34a','#ea580c','#dc2626'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:10}}}}});
 document.getElementById('barChartTitle').textContent=`${new Date().getFullYear()}년 월별 ACTION 처리 현황`;
 const mc={};
