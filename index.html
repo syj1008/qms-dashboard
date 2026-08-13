@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QMS HSP 진행 현황 | E-D-I-C-A 체인 관리</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>if(typeof Chart==='undefined'){document.write('<script src="https://unpkg.com/chart.js@4.4.0/dist/chart.umd.min.js"><\/script>');}</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
@@ -141,7 +142,7 @@ tbody tr.grp-cont.overdue{background:#fff5f5!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-08-13 15:07 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-08-13 15:15 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
@@ -311,24 +312,6 @@ function render(data){
     tb.innerHTML=`<tr><td colspan="10" style="color:red;padding:20px">렌더링 오류: ${e.message}</td></tr>`;
     console.error('render error:',e);
   }
-}
-    const dept = r.action_dept || (DEPT_MAP[r.assignee_id]||'');
-    const rowClass=isCont?'grp-cont':'grp-first';
-    const overdueClass=r.action_progress==='기한초과'?' overdue':'';
-    return`<tr class="${rowClass}${overdueClass}">
-      <td class="date-cell">${r.event_create||'-'}</td>
-      <td>${chainHtml}</td>
-      <td class="doc-num">${r.action_num||'-'}</td>
-      <td class="action-desc" data-tip="${(r.action_desc||'').replace(/"/g,'&quot;').replace(/
-/g,' ')}">${(r.action_desc||'').substring(0,50)||'-'}</td>
-      <td class="assignee">${r.assignee_name||'-'}</td>
-      <td class="dept-text" title="${dept}">${dept}</td>
-      <td style="white-space:nowrap;font-size:.78rem">${fmt(r.action_due)}</td>
-      <td style="white-space:nowrap;font-size:.78rem">${fmt(r.action_complete)}</td>
-      <td><span class="prog-badge ${pc}">${pt}</span></td>
-      <td><span class="dday ${dd.c}">${dd.t}</span></td>
-    </tr>`;
-  }).join('');
 }
 function isInvDone(r){
   if(r.chain_type==='E→A') return true;
