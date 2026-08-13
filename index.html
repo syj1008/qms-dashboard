@@ -79,11 +79,11 @@ header .subtitle{font-size:0.7rem;color:#94a3b8;margin-top:1px;font-weight:400}
 .legend-item{display:flex;align-items:center;gap:5px;font-size:.71rem;font-weight:600;color:#64748b}
 .dot{width:8px;height:8px;border-radius:2px;display:inline-block}
 /* ── Table ── */
-.table-section{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);overflow:hidden}
+.table-section{background:#fff;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04)}
 .table-header{padding:16px 20px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f1f5f9}
 .table-title{font-size:.85rem;font-weight:700;color:#0f172a;padding-bottom:14px}
 .tbl-scroll{overflow-x:auto;max-height:560px;overflow-y:auto}
-table{width:100%;border-collapse:collapse;font-size:.79rem}
+table{width:max-content;min-width:100%;border-collapse:collapse;font-size:.79rem;table-layout:auto}
 thead th{background:#f8fafc;color:#64748b;padding:10px 14px;text-align:left;font-size:.68rem;font-weight:700;position:sticky;top:0;z-index:2;cursor:pointer;white-space:nowrap;border-bottom:2px solid #e2e8f0;letter-spacing:.3px;text-transform:uppercase}
 thead th:hover{color:#6366f1;background:#f1f5f9}
 thead th.sort-active{color:#6366f1}
@@ -93,7 +93,7 @@ tbody tr:nth-child(even){background:#fafcff}
 tbody tr:nth-child(even):hover{background:#f5f7ff}
 tbody tr.overdue{background:#fff8f8}
 tbody tr.overdue:hover{background:#fff0f0}
-td{padding:10px 14px;vertical-align:middle}
+td{padding:10px 14px;vertical-align:middle;white-space:nowrap}
 /* ── Chain Badges ── */
 .chain-row{display:flex;align-items:center;gap:3px;font-size:.71rem}
 .chain-badge{padding:2px 7px;border-radius:5px;font-weight:700;font-size:.67rem;white-space:nowrap;letter-spacing:.2px}
@@ -119,10 +119,10 @@ td{padding:10px 14px;vertical-align:middle}
 .dday{font-size:.73rem;font-weight:700;letter-spacing:.2px}
 .dday.over{color:#ef4444}.dday.soon{color:#f97316}.dday.ok{color:#22c55e}.dday.done{color:#94a3b8}
 /* ── Cell Types ── */
-.doc-num{font-family:'SF Mono',monospace;font-size:.72rem;color:#6366f1;font-weight:700}
-.action-desc{max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#334155;cursor:pointer}
-.dept-text{font-size:.71rem;color:#64748b;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#f8fafc;padding:2px 6px;border-radius:4px}
-.assignee{font-size:.78rem;font-weight:600;color:#1e293b}
+.doc-num{font-family:'SF Mono',monospace;font-size:.72rem;color:#6366f1;font-weight:700;min-width:130px}
+.action-desc{width:200px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#334155;cursor:pointer}
+.dept-text{font-size:.71rem;color:#64748b;min-width:90px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#f8fafc;padding:2px 6px;border-radius:4px}
+.assignee{font-size:.78rem;font-weight:600;color:#1e293b;min-width:70px}
 .no-data{text-align:center;padding:60px;color:#cbd5e1}
 .no-data::before{content:'📋';display:block;font-size:2.5rem;margin-bottom:12px}
 /* ── Row Grouping ── */
@@ -171,7 +171,7 @@ tbody tr.grp-cont.overdue{background:#fff5f5!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-08-13 17:07 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-08-13 17:27 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
