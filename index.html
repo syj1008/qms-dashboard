@@ -47,9 +47,6 @@ tbody tr.overdue{background:#fff5f5}
 td{padding:9px 12px;vertical-align:middle}
 .chain-row{display:flex;align-items:center;gap:4px;font-size:.72rem}
 .chain-badge{padding:2px 6px;border-radius:4px;font-weight:700;font-size:.68rem;white-space:nowrap}
-.chain-badge[data-tip]{position:relative;cursor:help}
-.chain-badge[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);background:#1e293b;color:#f1f5f9;padding:6px 10px;border-radius:7px;font-size:.73rem;font-weight:400;white-space:normal;min-width:180px;max-width:300px;z-index:999;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.35);line-height:1.5;word-break:break-all}
-.chain-badge[data-tip]:hover::before{content:'';position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1e293b;z-index:999}
 .c-event{background:#dbeafe;color:#1d4ed8}.c-dev{background:#f3e8ff;color:#7c3aed}
 .c-issue{background:#dcfce7;color:#15803d}.c-capa{background:#fef9c3;color:#854d0e}
 .arrow{color:#94a3b8}
@@ -77,7 +74,7 @@ td{padding:9px 12px;vertical-align:middle}
     <h1>QMS HSP 진행 현황 대시보드</h1>
     <div class="subtitle">EVENT → DEV → ISSUE → CAPA → ACTION 체인 관리 (화순공장, 2024~현재)</div>
   </div>
-  <div class="hdr-right">데이터 기준: 2026-08-13 11:25 KST<br>자동 업데이트: 매일 09:00</div>
+  <div class="hdr-right">데이터 기준: 2026-08-13 13:53 KST<br>자동 업데이트: 매일 09:00</div>
 </header>
 <div class="wrap">
   <div class="cards">
@@ -101,19 +98,16 @@ td{padding:9px 12px;vertical-align:middle}
         <option value="">전체</option><option value="2026">2026</option>
         <option value="2025">2025</option><option value="2024">2024</option>
       </select></div>
-    <div class="fg"><label>근본원인조사</label>
-      <select id="fRootCause" onchange="applyFilters()">
-        <option value="">전체</option>
-        <option value="done">조사완료</option>
-        <option value="ongoing">조사중</option>
+    <div class="fg"><label>ACTION 상태</label>
+      <select id="fProgress" onchange="applyFilters()">
+        <option value="">전체</option><option value="기한초과">기한초과</option>
+        <option value="진행중">진행중</option><option value="완료">완료</option>
       </select></div>
-    <div class="fg"><label>ACTION 완료여부</label>
-      <select id="fActionStatus" onchange="applyFilters()">
+    <div class="fg"><label>체인 단계</label>
+      <select id="fChainStage" onchange="applyFilters()">
         <option value="">전체</option>
-        <option value="capa_none">CAPA 미발생</option>
-        <option value="진행중">진행중</option>
-        <option value="기한초과">기한초과</option>
-        <option value="완료">완료</option>
+        <option value="has_action">ACTION 있음</option>
+        <option value="no_action">CAPA 미발생</option>
       </select></div>
     <input type="text" id="fSearch" placeholder="문서번호, 제목, 담당자 검색..." oninput="applyFilters()">
     <button class="clear-btn" onclick="clearFilters()">초기화</button>
@@ -163,10 +157,9 @@ function dday(due,p){
   return d<0?{t:`D+${Math.abs(d)}`,c:'over',s:d}:d<=7?{t:`D-${d}`,c:'soon',s:d}:{t:`D-${d}`,c:'ok',s:d};
 }
 function dot(s){return`<span class="status-dot s-${s}"></span>`;}
-function badge(n,s,t,tip){
+function badge(n,s,t){
   if(!n)return`<span style="color:#cbd5e1">-</span>`;
-  const tipAttr=tip?` data-tip="${tip.replace(/"/g,'&quot;')}"`:` title="${n}"`;
-  return`<span class="chain-badge c-${t}"${tipAttr}>${s?dot(s):''}${n}</span>`;
+  return`<span class="chain-badge c-${t}" title="${n}">${s?dot(s):''}${n}</span>`;
 }
 function render(data){
   document.getElementById('resultCount').textContent=`${data.length}건`;
@@ -179,9 +172,9 @@ function render(data){
     const pt=r.action_progress||(r.capa_num?'ACTION 없음':'체인 진행중');
     // 체인 경로에 따라 다르게 표시
     const chainHtml = r.chain_type==='E→A'
-      ? `<div class="chain-row">${badge(r.event_num,r.event_status,'event',r.event_title)}</div>`
+      ? `<div class="chain-row">${badge(r.event_num,r.event_status,'event')}</div>`
       : `<div class="chain-row">
-          ${badge(r.event_num,r.event_status,'event',r.event_title)}
+          ${badge(r.event_num,r.event_status,'event')}
           <span class="arrow">→</span>${badge(r.dev_num,r.dev_status,'dev')}
           <span class="arrow">→</span>${badge(r.issue_num,r.issue_status,'issue')}
           <span class="arrow">→</span>${badge(r.capa_num,r.capa_status,'capa')}
@@ -201,52 +194,22 @@ function render(data){
     </tr>`;
   }).join('');
 }
-function isInvDone(r){
-  // E→A 직접 경로: ACTION이 있으면 조사완료
-  if(r.chain_type==='E→A') return true;
-  // E→D→I→C→A 경로: ISSUE 발생 = 조사완료
-  if(r.issue_num) return true;
-  // DEV 종료(ISSUE없이) = 조사완료
-  if(!r.issue_num&&(r.dev_status==='Release'||r.dev_status==='Abort')) return true;
-  return false;
-}
 function applyFilters(){
   const yr=document.getElementById('fYear').value;
-  const rc=document.getElementById('fRootCause').value;
-  const as=document.getElementById('fActionStatus').value;
+  const pg=document.getElementById('fProgress').value;
+  const st=document.getElementById('fChainStage').value;
   const q=document.getElementById('fSearch').value.toLowerCase();
   filtered=DATA.filter(r=>{
     if(yr&&!r.event_create.startsWith(yr))return false;
-    // 근본원인조사
-    if(rc==='done'&&!isInvDone(r))return false;
-    if(rc==='ongoing'&&isInvDone(r))return false;
-    // ACTION 완료여부
-    if(as==='capa_none'){
-      // ISSUE 발생했으나 CAPA 없는 것 (E→A 제외)
-      if(r.chain_type==='E→A')return false;
-      if(!r.issue_num||r.capa_num)return false;
-    }
-    if(as==='진행중'){
-      const ok=(r.chain_type==='E→A'&&r.action_num&&r.action_progress==='진행중')
-             ||(r.chain_type!=='E→A'&&r.issue_num&&r.capa_num&&r.action_num&&r.action_progress==='진행중');
-      if(!ok)return false;
-    }
-    if(as==='기한초과'){
-      const ok=(r.chain_type==='E→A'&&r.action_num&&r.action_progress==='기한초과')
-             ||(r.chain_type!=='E→A'&&r.issue_num&&r.capa_num&&r.action_num&&r.action_progress==='기한초과');
-      if(!ok)return false;
-    }
-    if(as==='완료'){
-      const ok=(r.chain_type==='E→A'&&r.action_num&&r.action_progress==='완료')
-             ||(r.chain_type!=='E→A'&&r.issue_num&&r.capa_num&&r.action_num&&r.action_progress==='완료');
-      if(!ok)return false;
-    }
+    if(pg&&r.action_progress!==pg)return false;
+    if(st==='has_action'&&!r.action_num)return false;
+    if(st==='no_action'&&r.action_num)return false;
     if(q&&![r.event_num,r.dev_num,r.issue_num,r.capa_num,r.action_num,r.event_title,r.action_desc,r.assignee_name].join(' ').toLowerCase().includes(q))return false;
     return true;
   });
   sortAndRender();
 }
-function clearFilters(){['fYear','fRootCause','fActionStatus'].forEach(i=>document.getElementById(i).value='');document.getElementById('fSearch').value='';applyFilters();}
+function clearFilters(){['fYear','fProgress','fChainStage'].forEach(i=>document.getElementById(i).value='');document.getElementById('fSearch').value='';applyFilters();}
 function sortBy(k){if(sortKey===k)_asc=!_asc;else{sortKey=k;_asc=false;}sortAndRender();}
 function sortAndRender(){
   filtered.sort((a,b)=>{
