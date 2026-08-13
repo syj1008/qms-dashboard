@@ -110,6 +110,14 @@ td{padding:10px 14px;vertical-align:middle}
 .assignee{font-size:.78rem;font-weight:600;color:#1e293b}
 .no-data{text-align:center;padding:60px;color:#cbd5e1}
 .no-data::before{content:'📋';display:block;font-size:2.5rem;margin-bottom:12px}
+/* ── Row Grouping ── */
+tbody tr.grp-first td:first-child{border-left:3px solid #6366f1}
+tbody tr.grp-cont{background:#f8f9ff!important}
+tbody tr.grp-cont td:first-child{border-left:3px solid #6366f1}
+tbody tr.grp-cont:hover{background:#f0f2ff!important}
+tbody tr.grp-cont.overdue{background:#fff5f5!important}
+.chain-continuation{display:flex;align-items:center;gap:5px;color:#94a3b8;font-size:.7rem;padding-left:4px}
+.chain-continuation .cont-arrow{font-size:1rem;color:#a5b4fc}
 /* ── Date cell ── */
 .date-cell{font-size:.74rem;color:#64748b;white-space:nowrap}
 /* ── Scrollbar ── */
@@ -131,7 +139,7 @@ td{padding:10px 14px;vertical-align:middle}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-08-13 14:16 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-08-13 14:25 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
@@ -174,8 +182,8 @@ td{padding:10px 14px;vertical-align:middle}
     </div>
   </div>
   <div class="charts-row">
-    <div class="chart-card"><h3>ACTION 처리 현황</h3><div class="chart-wrap"><canvas id="donutChart"></canvas></div></div>
-    <div class="chart-card"><h3>월별 ACTION 기한 분포</h3><div class="chart-wrap"><canvas id="barChart"></canvas></div></div>
+    <div class="chart-card"><h3>전체 ACTION 처리 현황</h3><div class="chart-wrap"><canvas id="donutChart"></canvas></div></div>
+    <div class="chart-card"><h3 id="barChartTitle">월별 ACTION 처리 현황</h3><div class="chart-wrap"><canvas id="barChart"></canvas></div></div>
   </div>
   <div class="chart-card" style="margin-bottom:18px">
     <h3 id="teamChartTitle">팀별 EVENT 발생 현황</h3>
@@ -272,22 +280,36 @@ function render(data){
   const tb=document.getElementById('tableBody');
   if(!data.length){tb.innerHTML='';document.getElementById('noData').style.display='block';return;}
   document.getElementById('noData').style.display='none';
+  let prevGroupKey='';
   tb.innerHTML=data.map(r=>{
     const dd=dday(r.action_due,r.action_progress);
     const pc=r.action_progress?`pb-${r.action_progress}`:'pb-empty';
     const pt=r.action_progress||(r.capa_num?'ACTION 없음':'체인 진행중');
+    // 그룹 키: 같은 CAPA(체인) 또는 같은 EVENT(E→A)
+    const groupKey=r.chain_type==='E→A'?(r.event_num||''):(r.capa_num||r.dev_num||r.event_num||'');
+    const isCont=groupKey&&groupKey===prevGroupKey;
+    prevGroupKey=groupKey;
     // 체인 경로에 따라 다르게 표시
-    const chainHtml = r.chain_type==='E→A'
-      ? `<div class="chain-row">${badge(r.event_num,r.event_status,'event',r.event_title)}</div>`
-      : `<div class="chain-row">
+    let chainHtml;
+    if(isCont){
+      // 연속 행: 간략 표시
+      const ref=r.chain_type==='E→A'?r.event_num:r.capa_num||r.dev_num||'';
+      chainHtml=`<div class="chain-continuation"><span class="cont-arrow">↳</span><span style="font-size:.67rem;color:#a5b4fc;font-weight:600">${ref} +1</span></div>`;
+    } else if(r.chain_type==='E→A'){
+      chainHtml=`<div class="chain-row">${badge(r.event_num,r.event_status,'event',r.event_title)}</div>`;
+    } else {
+      chainHtml=`<div class="chain-row">
           ${badge(r.event_num,r.event_status,'event',r.event_title)}
           <span class="arrow">→</span>${badge(r.dev_num,r.dev_status,'dev')}
           <span class="arrow">→</span>${badge(r.issue_num,r.issue_status,'issue')}
           <span class="arrow">→</span>${badge(r.capa_num,r.capa_status,'capa')}
         </div>`;
+    }
     const dept = r.action_dept || (DEPT_MAP[r.assignee_id]||'');
-    return`<tr${r.action_progress==='기한초과'?' class="overdue"':''}>
-      <td style="white-space:nowrap;font-size:.78rem;color:#475569">${r.event_create||'-'}</td>
+    const rowClass=isCont?'grp-cont':'grp-first';
+    const overdueClass=r.action_progress==='기한초과'?' overdue':'';
+    return`<tr class="${rowClass}${overdueClass}">
+      <td class="date-cell">${r.event_create||'-'}</td>
       <td>${chainHtml}</td>
       <td class="doc-num">${r.action_num||'-'}</td>
       <td class="action-desc" title="${(r.action_desc||'').replace(/"/g,'&quot;')}">${(r.action_desc||'').substring(0,50)||'-'}</td>
@@ -353,6 +375,7 @@ function sortAndRender(){
 }
 applyFilters();
 new Chart(document.getElementById('donutChart'),{type:'doughnut',data:{labels:['완료','진행중','기한초과'],datasets:[{data:[488,20,12],backgroundColor:['#16a34a','#ea580c','#dc2626'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:10}}}}});
+document.getElementById('barChartTitle').textContent=`${new Date().getFullYear()}년 월별 ACTION 처리 현황`;
 const mc={};
 DATA.forEach(r=>{if(r.action_due&&r.action_due.length>=7){const m=r.action_due.substring(0,7);mc[m]=mc[m]||{d:0,p:0,o:0};if(r.action_progress==='완료')mc[m].d++;else if(r.action_progress==='기한초과')mc[m].o++;else mc[m].p++;}} );
 const ms=Object.keys(mc).sort().slice(-18);
