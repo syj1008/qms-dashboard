@@ -146,7 +146,8 @@ tbody tr.grp-cont.overdue{background:#fff5f5!important}
 /* ── 연도 라벨 ── */
 .year-label{font-size:.78rem;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:.8px;margin:16px 0 8px;padding-left:2px}
 /* ── 누적 요약 바 ── */
-.cumul-bar{background:#fff;border-radius:10px;padding:10px 18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05);display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.78rem}
+.cumul-rows{background:#fff;border-radius:10px;padding:10px 18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05);display:flex;flex-direction:column;gap:0}
+.cumul-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.78rem}
 .cumul-title{font-weight:700;color:#64748b;font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;margin-right:4px}
 .cumul-item{color:#334155;font-size:.78rem}.cumul-item b{font-weight:800}
 .cumul-sep{color:#e2e8f0}
@@ -171,7 +172,7 @@ tbody tr.grp-cont.overdue{background:#fff5f5!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-08-14 09:00 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-08-14 09:44 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
@@ -215,18 +216,32 @@ tbody tr.grp-cont.overdue{background:#fff5f5!important}
       <div class="card-accent"></div>
     </div>
   </div>
-  <!-- ② 누적 요약 바 (2024~현재) -->
-  <div class="cumul-bar">
-    <span class="cumul-title">2024~현재 누적</span>
-    <span class="cumul-item">이벤트·OOS <b>562</b></span>
-    <span class="cumul-sep">|</span>
-    <span class="cumul-item">CAPA <b>245</b></span>
-    <span class="cumul-sep">|</span>
-    <span class="cumul-item cumul-green">완료 <b>511</b></span>
-    <span class="cumul-sep">|</span>
-    <span class="cumul-item cumul-orange">진행중 <b>21</b></span>
-    <span class="cumul-sep">|</span>
-    <span class="cumul-item cumul-red">기한초과 <b>12</b></span>
+  <!-- ② 연도별 요약 2줄 -->
+  <div class="cumul-rows">
+    <div class="cumul-bar">
+      <span class="cumul-title">2025년</span>
+      <span class="cumul-item">이벤트·OOS <b>274</b></span>
+      <span class="cumul-sep">|</span>
+      <span class="cumul-item">CAPA <b>121</b></span>
+      <span class="cumul-sep">|</span>
+      <span class="cumul-item cumul-green">완료 <b>275</b></span>
+      <span class="cumul-sep">|</span>
+      <span class="cumul-item cumul-orange">진행중 <b>0</b></span>
+      <span class="cumul-sep">|</span>
+      <span class="cumul-item cumul-red">기한초과 <b>5</b></span>
+    </div>
+    <div class="cumul-bar" style="border-top:1px solid #f1f5f9;padding-top:8px">
+      <span class="cumul-title">2024년</span>
+      <span class="cumul-item">이벤트·OOS <b>142</b></span>
+      <span class="cumul-sep">|</span>
+      <span class="cumul-item">CAPA <b>73</b></span>
+      <span class="cumul-sep">|</span>
+      <span class="cumul-item cumul-green">완료 <b>136</b></span>
+      <span class="cumul-sep">|</span>
+      <span class="cumul-item cumul-orange">진행중 <b>0</b></span>
+      <span class="cumul-sep">|</span>
+      <span class="cumul-item cumul-red">기한초과 <b>0</b></span>
+    </div>
   </div>
   <div class="charts-row">
     <div class="chart-card"><h3 id="barChartTitle">월별 ACTION 처리 현황</h3><div class="chart-wrap"><canvas id="barChart"></canvas></div></div>
