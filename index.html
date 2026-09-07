@@ -182,7 +182,7 @@ tbody tr.grp-cont.overdue{background:#fff5f5!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-09-07 09:12 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-09-07 09:21 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
@@ -332,7 +332,7 @@ tbody tr.grp-cont.overdue{background:#fff5f5!important}
       <span class="legend-item"><span class="status-dot s-Draft"></span>Draft</span>
     </div>
     <div class="table-section">
-      <div class="table-header"><div class="table-title">ACTION 목록</div></div>
+      <div class="table-header"><div class="table-title">EVENT 종합 목록</div></div>
       <div class="tbl-scroll">
         <table>
           <thead><tr>
@@ -506,16 +506,13 @@ function sortAndRender(){
   });
   render(filtered);
 }
-// 전역 에러 핸들러
+// 전역 에러 핸들러 — 콘솔에만 기록, 테이블은 건드리지 않음
 window.onerror=function(msg,src,line,col,err){
-  const tb=document.getElementById('tableBody');
-  if(tb)tb.innerHTML=`<tr><td colspan="10" style="color:red;padding:20px;font-size:.9rem">⚠️ JS 오류 (line ${line}): ${msg}</td></tr>`;
+  console.error('JS 오류 (line '+line+'): '+msg, err);
   return false;
 };
 try{applyFilters();}catch(e){
-  const tb=document.getElementById('tableBody');
-  if(tb)tb.innerHTML=`<tr><td colspan="10" style="color:red;padding:20px;font-size:.9rem">⚠️ applyFilters 오류: ${e.message}</td></tr>`;
-  console.error(e);
+  console.error('applyFilters 오류:',e);
 }
 // ── 페이지 전환 ──
 function showPage(n){
@@ -526,88 +523,97 @@ function showPage(n){
 }
 // ── EVENT 발생 추이 차트 (최근 3개년 막대+꺾은선 혼합) ──
 (function(){
-  const years=Object.keys(TREND).sort();
-  const withDev   = years.map(y=>TREND[y]?.with_dev||0);
-  const withoutDev= years.map(y=>TREND[y]?.without_dev||0);
-  const totals    = years.map(y=>TREND[y]?.total||0);
-  // 막대 내부 숫자 레이블 커스텀 플러그인
-  const stackedLabels={
-    id:'stackedLabels',
-    afterDatasetsDraw(chart){
-      const ctx=chart.ctx;
-      chart.data.datasets.forEach((ds,di)=>{
-        if(ds.type==='line')return;
-        const meta=chart.getDatasetMeta(di);
-        meta.data.forEach((bar,i)=>{
-          const val=ds.data[i];
-          if(!val||val===0)return;
-          const cy=(bar.y+bar.base)/2;
-          const barH=Math.abs(bar.base-bar.y);
-          if(barH<14)return;
-          ctx.save();
-          ctx.font='bold 11px Inter,sans-serif';
-          ctx.fillStyle=di===0?'#fff':'#475569';
-          ctx.textAlign='center';
-          ctx.textBaseline='middle';
-          ctx.fillText(val,bar.x,cy);
-          ctx.restore();
+  try{
+    var years=Object.keys(TREND).sort();
+    var withDev   =years.map(function(y){return(TREND[y]&&TREND[y].with_dev)||0;});
+    var withoutDev=years.map(function(y){return(TREND[y]&&TREND[y].without_dev)||0;});
+    var totals    =years.map(function(y){return(TREND[y]&&TREND[y].total)||0;});
+    // 막대 내부 숫자 레이블 커스텀 플러그인
+    var stackedLabels={
+      id:'stackedLabels',
+      afterDatasetsDraw:function(chart){
+        var ctx=chart.ctx;
+        chart.data.datasets.forEach(function(ds,di){
+          if(ds.type==='line')return;
+          var meta=chart.getDatasetMeta(di);
+          meta.data.forEach(function(bar,i){
+            var val=ds.data[i];
+            if(!val||val===0)return;
+            var base=bar.base!==undefined?bar.base:bar.y;
+            var cy=(bar.y+base)/2;
+            var barH=Math.abs(base-bar.y);
+            if(barH<14)return;
+            ctx.save();
+            ctx.font='bold 11px Inter,sans-serif';
+            ctx.fillStyle=di===0?'#fff':'#475569';
+            ctx.textAlign='center';
+            ctx.textBaseline='middle';
+            ctx.fillText(val,bar.x,cy);
+            ctx.restore();
+          });
         });
-      });
-    }
-  };
-  new Chart(document.getElementById('trendChart'),{
-    type:'bar',
-    plugins:[stackedLabels],
-    data:{
-      labels:years,
-      datasets:[
-        {label:'DEV 연결',data:withDev,backgroundColor:'rgba(99,102,241,0.85)',
-          borderRadius:{topLeft:0,topRight:0,bottomLeft:5,bottomRight:5},stack:'ev',order:2},
-        {label:'EVENT만',data:withoutDev,backgroundColor:'rgba(203,213,225,0.75)',
-          borderRadius:{topLeft:5,topRight:5,bottomLeft:0,bottomRight:0},stack:'ev',order:2},
-        {label:'총 발생',data:totals,type:'line',
-          borderColor:'#ef4444',borderWidth:2.5,
-          backgroundColor:'rgba(239,68,68,0.07)',
-          pointBackgroundColor:'#ef4444',pointRadius:6,pointHoverRadius:8,
-          fill:false,tension:0.3,order:1}
-      ]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'top',labels:{font:{size:11}}}},
-      scales:{
-        x:{stacked:true,ticks:{font:{size:12},maxRotation:0}},
-        y:{stacked:true,beginAtZero:true,ticks:{font:{size:10},stepSize:5}}
       }
-    }
-  });
+    };
+    new Chart(document.getElementById('trendChart'),{
+      type:'bar',
+      plugins:[stackedLabels],
+      data:{
+        labels:years,
+        datasets:[
+          {label:'DEV 연결',data:withDev,backgroundColor:'rgba(99,102,241,0.85)',
+            borderRadius:4,stack:'ev',order:2},
+          {label:'EVENT만',data:withoutDev,backgroundColor:'rgba(203,213,225,0.75)',
+            borderRadius:4,stack:'ev',order:2},
+          {label:'총 발생',data:totals,type:'line',
+            borderColor:'#ef4444',borderWidth:2.5,
+            backgroundColor:'rgba(239,68,68,0.07)',
+            pointBackgroundColor:'#ef4444',pointRadius:6,pointHoverRadius:8,
+            fill:false,tension:0.3,order:1,yAxisID:'y'}
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'top',labels:{font:{size:11}}}},
+        scales:{
+          x:{stacked:true,ticks:{font:{size:12},maxRotation:0}},
+          y:{stacked:false,beginAtZero:true,ticks:{font:{size:10},stepSize:5}}
+        }
+      }
+    });
+  }catch(chartErr){
+    console.error('trendChart 초기화 오류:',chartErr);
+  }
 })();
 // ── 팀별 EVENT 분포 차트 (최근 2개년) ──
 (function(){
-  const curY=new Date().getFullYear(), preY=curY-1;
-  document.getElementById('teamChartTitle').textContent=`팀별 EVENT 발생 현황 (${preY}년 / ${curY}년)`;
-  const seen=new Set(), td={};
-  DATA.forEach(r=>{
-    if(r.action_idx!=='1')return;
-    const yr=r.event_create?r.event_create.substring(0,4):'';
-    if(yr!==String(curY)&&yr!==String(preY))return;
-    const key=r.event_num+'|'+yr;
-    if(seen.has(key))return; seen.add(key);
-    const team=r.event_dept||'미분류';
-    if(!td[team])td[team]={[curY]:0,[preY]:0};
-    td[team][yr]=(td[team][yr]||0)+1;
-  });
-  const teams=Object.entries(td).sort((a,b)=>(b[1][curY]+b[1][preY])-(a[1][curY]+a[1][preY])).slice(0,15).map(e=>e[0]);
-  new Chart(document.getElementById('teamChart'),{type:'bar',
-    data:{labels:teams,datasets:[
-      {label:`${preY}년`,data:teams.map(t=>td[t]?.[preY]||0),backgroundColor:'rgba(99,102,241,0.7)',borderRadius:4},
-      {label:`${curY}년`,data:teams.map(t=>td[t]?.[curY]||0),backgroundColor:'rgba(14,165,233,0.85)',borderRadius:4}
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'top',labels:{font:{size:11}}}},
-      scales:{x:{ticks:{font:{size:9},maxRotation:35}},y:{beginAtZero:true,ticks:{font:{size:10},stepSize:1}}}
-    }
-  });
+  try{
+    const curY=new Date().getFullYear(), preY=curY-1;
+    document.getElementById('teamChartTitle').textContent=`팀별 EVENT 발생 현황 (${preY}년 / ${curY}년)`;
+    const seen=new Set(), td={};
+    DATA.forEach(r=>{
+      if(r.action_idx!=='1')return;
+      const yr=r.event_create?r.event_create.substring(0,4):'';
+      if(yr!==String(curY)&&yr!==String(preY))return;
+      const key=r.event_num+'|'+yr;
+      if(seen.has(key))return; seen.add(key);
+      const team=r.event_dept||'미분류';
+      if(!td[team])td[team]={[curY]:0,[preY]:0};
+      td[team][yr]=(td[team][yr]||0)+1;
+    });
+    const teams=Object.entries(td).sort((a,b)=>(b[1][curY]+b[1][preY])-(a[1][curY]+a[1][preY])).slice(0,15).map(e=>e[0]);
+    new Chart(document.getElementById('teamChart'),{type:'bar',
+      data:{labels:teams,datasets:[
+        {label:`${preY}년`,data:teams.map(t=>td[t]?.[preY]||0),backgroundColor:'rgba(99,102,241,0.7)',borderRadius:4},
+        {label:`${curY}년`,data:teams.map(t=>td[t]?.[curY]||0),backgroundColor:'rgba(14,165,233,0.85)',borderRadius:4}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'top',labels:{font:{size:11}}}},
+        scales:{x:{ticks:{font:{size:9},maxRotation:35}},y:{beginAtZero:true,ticks:{font:{size:10},stepSize:1}}}
+      }
+    });
+  }catch(chartErr){
+    console.error('teamChart 초기화 오류:',chartErr);
+  }
 })();
 // ── ACTION 내용 전체 툴팁 (body 기준 fixed 포지셔닝) ──
 (function(){
