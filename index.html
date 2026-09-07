@@ -156,7 +156,7 @@ tbody tr.grp-cont.overdue{background:#fff5f5!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-09-07 09:55 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-09-07 10:22 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
@@ -526,8 +526,8 @@ function showPage(n){
           pointRadius:6,pointHoverRadius:8,fill:false,tension:0.3,order:1,yAxisID:'y'}
       ]},
       options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{position:'top',labels:{font:{size:11}},
-        scales:{x:{stacked:true,ticks:{font:{size:12},maxRotation:0},y:{stacked:false,beginAtZero:true,ticks:{font:{size:10},stepSize:5}}
+        plugins:{legend:{position:'top',labels:{font:{size:11}}}},
+        scales:{x:{stacked:true,ticks:{font:{size:12},maxRotation:0}},y:{stacked:false,beginAtZero:true,ticks:{font:{size:10},stepSize:5}}}
       }
     });
   }catch(e){console.error('trendChart 오류:',e);}
@@ -556,8 +556,8 @@ function showPage(n){
         {label:curY+'년',data:teams.map(function(t){return td[t][curY]||0;}),backgroundColor:'rgba(14,165,233,0.85)',borderRadius:4}
       ]},
       options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{position:'top',labels:{font:{size:11}},
-        scales:{x:{ticks:{font:{size:9},maxRotation:35},y:{beginAtZero:true,ticks:{font:{size:10},stepSize:1}}
+        plugins:{legend:{position:'top',labels:{font:{size:11}}}},
+        scales:{x:{ticks:{font:{size:9},maxRotation:35}},y:{beginAtZero:true,ticks:{font:{size:10},stepSize:1}}}
       }
     });
   }catch(e){console.error('teamChart 오류:',e);}
