@@ -44,10 +44,11 @@ header .subtitle{font-size:.72rem;color:#a1a1aa;margin-top:2px;font-weight:500}
 .card-sub{font-size:.68rem;color:#d4d4d8;margin-top:6px;font-weight:500}
 /* ── Charts ── */
 .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.chart-card{background:#fff;border-radius:20px;padding:22px 24px;box-shadow:0 1px 2px rgba(0,0,0,.03);border:1px solid #eeeeef}
+.chart-card{background:#fff;border-radius:20px;padding:22px 24px;box-shadow:0 1px 2px rgba(0,0,0,.03);border:1px solid #eeeeef;min-width:0}
 .chart-card h3{font-size:.82rem;font-weight:800;color:#3f3f46;margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .chart-card h3::before{content:'';width:4px;height:15px;background:#d4d4d8;border-radius:3px;display:inline-block}
-.chart-wrap{position:relative;height:clamp(150px,18vw,240px)}
+.chart-wrap{position:relative;height:clamp(150px,18vw,240px);width:100%;min-width:0}
+.chart-wrap canvas{max-width:100%}
 /* ── Filter Bar ── */
 .filter-section{background:#fff;border-radius:20px;padding:18px 22px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.03);border:1px solid #eeeeef}
 .filter-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
@@ -116,7 +117,7 @@ td{padding:11px 16px;vertical-align:middle;white-space:nowrap}
 .pb-진행중{background:#fef3c7;color:#b45309}
 .pb-기한초과{background:#ffe4e6;color:#be123c;animation:pulse 2s infinite}
 .pb-empty{background:#f4f4f5;color:#a1a1aa}
-.pb-중단{background:#f4f4f5;color:#71717a}
+.pb-중단{background:#18181b;color:#fff}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
 /* ── D-Day ── */
 .dday{font-size:.73rem;font-weight:700;letter-spacing:.2px}
@@ -193,7 +194,7 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-09-08 17:07 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-09-08 17:26 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
@@ -371,7 +372,6 @@ DATA.forEach(function(r){ if(!r.action_dept && r.assignee_id) r.action_dept=DEPT
 var sortKey='event_create',_asc=false,filtered=[];
 function fmt(d){return(!d||d==='None'||d==='')?'-':d.substring(0,10);}
 function dday(due,p){
-  if(p==='중단')return{t:'중단',c:'done',s:9997};
   if(!due||due===''||due==='None')return{t:'-',c:'done',s:9999};
   if(p==='완료')return{t:'완료',c:'done',s:9998};
   var d=Math.ceil((new Date(due)-new Date())/(864e5));
@@ -389,9 +389,10 @@ function render(data){
   document.getElementById('noData').style.display='none';
   try{
     tb.innerHTML=data.map(function(r,idx){
-      var dd=dday(r.action_due,r.action_progress);
-      var pc=r.action_progress?'pb-'+r.action_progress:'pb-empty';
-      var pt=r.action_progress||(r.capa_num?'ACTION 없음':'체인 진행중');
+      var dd=r.is_abort_target?{t:'-',c:'done',s:9997}:dday(r.action_due,r.action_progress);
+      var pc,pt;
+      if(r.is_abort_target){pc='pb-중단';pt='중단';}
+      else{pc=r.action_progress?'pb-'+r.action_progress:'pb-empty';pt=r.action_progress||(r.capa_num?'ACTION 없음':'체인 진행중');}
       var EA='E\u2192A', OICA='OOS\u2192I\u2192C\u2192A';
       var gk=r.chain_type===EA?(r.event_num||''):(r.capa_num||r.dev_num||r.event_num||'');
       var prev=idx>0?data[idx-1]:null;
@@ -410,10 +411,9 @@ function render(data){
       }
       var dept=r.action_dept||(DEPT_MAP[r.assignee_id]||'');
       var rowClass=isCont?'grp-cont':'grp-first';
-      var overdueClass=r.action_progress==='기한초과'?' overdue':'';
+      var overdueClass=(r.action_progress==='기한초과'&&!r.is_abort_target)?' overdue':'';
       var desc=(r.action_desc||'').replace(/"/g,'&quot;');
-      var dueText=r.action_progress==='중단'?'중단':fmt(r.action_due);
-      return'<tr class="'+rowClass+overdueClass+'"><td class="date-cell">'+(r.event_create||'-')+'</td><td>'+chainHtml+'</td><td class="doc-num">'+(r.action_num||'-')+'</td><td class="action-desc" data-tip="'+desc+'">'+(r.action_desc||'').substring(0,50)+'</td><td class="assignee">'+(r.assignee_name||'-')+'</td><td class="dept-text" title="'+dept+'">'+dept+'</td><td style="white-space:nowrap;font-size:.78rem">'+dueText+'</td><td style="white-space:nowrap;font-size:.78rem">'+fmt(r.action_complete)+'</td><td><span class="prog-badge '+pc+'">'+pt+'</span></td><td><span class="dday '+dd.c+'">'+dd.t+'</span></td></tr>';
+      return'<tr class="'+rowClass+overdueClass+'"><td class="date-cell">'+(r.event_create||'-')+'</td><td>'+chainHtml+'</td><td class="doc-num">'+(r.action_num||'-')+'</td><td class="action-desc" data-tip="'+desc+'">'+(r.action_desc||'').substring(0,50)+'</td><td class="assignee">'+(r.assignee_name||'-')+'</td><td class="dept-text" title="'+dept+'">'+dept+'</td><td style="white-space:nowrap;font-size:.78rem">'+fmt(r.action_due)+'</td><td style="white-space:nowrap;font-size:.78rem">'+fmt(r.action_complete)+'</td><td><span class="prog-badge '+pc+'">'+pt+'</span></td><td><span class="dday '+dd.c+'">'+dd.t+'</span></td></tr>';
     }).join('');
   }catch(e){
     tb.innerHTML='<tr><td colspan="10" style="color:red;padding:20px">렌더링 오류: '+e.message+'</td></tr>';
@@ -443,15 +443,15 @@ function applyFilters(){
       if(!r.issue_num||r.capa_num)return false;
     }
     if(as==='진행중'){
-      var ok=(r.chain_type==='E\u2192A'&&r.action_num&&r.action_progress==='진행중')||(r.chain_type!=='E\u2192A'&&r.issue_num&&r.capa_num&&r.action_num&&r.action_progress==='진행중');
+      var ok=!r.is_abort_target&&((r.chain_type==='E\u2192A'&&r.action_num&&r.action_progress==='진행중')||(r.chain_type!=='E\u2192A'&&r.issue_num&&r.capa_num&&r.action_num&&r.action_progress==='진행중'));
       if(!ok)return false;
     }
     if(as==='기한초과'){
-      var ok=(r.chain_type==='E\u2192A'&&r.action_num&&r.action_progress==='기한초과')||(r.chain_type!=='E\u2192A'&&r.issue_num&&r.capa_num&&r.action_num&&r.action_progress==='기한초과');
+      var ok=!r.is_abort_target&&((r.chain_type==='E\u2192A'&&r.action_num&&r.action_progress==='기한초과')||(r.chain_type!=='E\u2192A'&&r.issue_num&&r.capa_num&&r.action_num&&r.action_progress==='기한초과'));
       if(!ok)return false;
     }
     if(as==='완료'){
-      var ok=(r.chain_type==='E\u2192A'&&r.action_num&&r.action_progress==='완료')||(r.chain_type!=='E\u2192A'&&r.issue_num&&r.capa_num&&r.action_num&&r.action_progress==='완료');
+      var ok=r.is_abort_target||(r.chain_type==='E\u2192A'&&r.action_num&&r.action_progress==='완료')||(r.chain_type!=='E\u2192A'&&r.issue_num&&r.capa_num&&r.action_num&&r.action_progress==='완료');
       if(!ok)return false;
     }
     if(q&&![r.event_num,r.dev_num,r.issue_num,r.capa_num,r.action_num,r.event_title,r.action_desc,r.assignee_name,r.action_dept,(DEPT_MAP[r.assignee_id]||'')].join(' ').toLowerCase().includes(q))return false;
@@ -613,6 +613,8 @@ var TEAM_ORDER=['Flu B.M.','VZ B.M.','VZ filing','filing','packaging','세균백
 function simplifyTeam(raw){
   var t=(raw||'').trim();
   if(!t)return'기타';
+  // 정규화: '(HSP)' 표기와 말미의 '팀' 글자를 떼고 매칭 (예: 'QA(HSP)팀' → 'QA')
+  var norm=t.replace(/\(HSP\)/gi,'').replace(/팀\s*$/,'').trim();
   // 신규 명칭 + 구 명칭(레거시) 모두 매칭
   var exact={
     'Flu Bulk Manufacturing':'Flu B.M.','플루':'Flu B.M.',
@@ -626,22 +628,23 @@ function simplifyTeam(raw){
     'QA':'QA','QC':'QC',
     '공무':'공무','GMP IT':'GMP IT','DI':'DI'
   };
+  if(exact[norm])return exact[norm];
   if(exact[t])return exact[t];
-  var low=t.toLowerCase();
+  var low=norm.toLowerCase();
   if(low==='se')return'ET2'; // 구 명칭(대소문자 무관)
-  if(t.indexOf('플루')>-1)return'Flu B.M.';
+  if(low.indexOf('qc')>-1)return'QC'; // QC(HSP) 등
+  if(low.indexOf('qa')>-1)return'QA'; // QA(HSP) 등
+  if(norm.indexOf('플루')>-1)return'Flu B.M.';
   if(low.indexOf('flu')>-1&&low.indexOf('bulk')>-1)return'Flu B.M.';
-  if(t.indexOf('완제')>-1&&(t.indexOf('수두')>-1||low.indexOf('vz')>-1))return'VZ filing';
-  if((low.indexOf('vz')>-1||t.indexOf('수두')>-1)&&(low.indexOf('bulk')>-1||t.indexOf('원액')>-1))return'VZ B.M.';
+  if(norm.indexOf('완제')>-1&&(norm.indexOf('수두')>-1||low.indexOf('vz')>-1))return'VZ filing';
+  if((low.indexOf('vz')>-1||norm.indexOf('수두')>-1)&&(low.indexOf('bulk')>-1||norm.indexOf('원액')>-1))return'VZ B.M.';
   if(low.indexOf('vz')>-1&&low.indexOf('fill')>-1)return'VZ filing';
-  if(low.indexOf('fill')>-1||t.indexOf('충전')>-1)return'filing';
-  if(low.indexOf('pack')>-1||t.indexOf('포장')>-1)return'packaging';
-  if(t.indexOf('세균')>-1)return'세균백신';
-  if(t.indexOf('기술이전')>-1)return'기술이전';
+  if(low.indexOf('fill')>-1||norm.indexOf('충전')>-1)return'filing';
+  if(low.indexOf('pack')>-1||norm.indexOf('포장')>-1)return'packaging';
+  if(norm.indexOf('세균')>-1)return'세균백신';
+  if(norm.indexOf('기술이전')>-1)return'기술이전';
   if(low==='et2')return'ET2';
-  if(low==='qa')return'QA';
-  if(low==='qc')return'QC';
-  if(t.indexOf('공무')>-1)return'공무';
+  if(norm.indexOf('공무')>-1)return'공무';
   if(low.indexOf('gmp')>-1&&low.indexOf('it')>-1)return'GMP IT';
   if(low==='di')return'DI';
   return'기타';
@@ -684,7 +687,7 @@ function renderDeviationDetail(){
     var months=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
     var thead='<thead>';
     thead+='<tr><th rowspan="3">구분</th><th colspan="2">2025년</th><th colspan="26">2026년</th><th rowspan="3" class="mtx-total">합계</th></tr>';
-    thead+='<tr><th class="mtx-sub">Event</th><th class="mtx-sub">DVE</th><th colspan="13" class="mtx-sub">Event</th><th colspan="13" class="mtx-sub">DVE</th></tr>';
+    thead+='<tr><th class="mtx-sub" rowspan="2">Event</th><th class="mtx-sub" rowspan="2">DVE</th><th colspan="13" class="mtx-sub">Event</th><th colspan="13" class="mtx-sub">DVE</th></tr>';
     var monthRow='<tr>';
     months.forEach(function(m){monthRow+='<th>'+m+'</th>';});
     monthRow+='<th class="mtx-sub">계</th>';
