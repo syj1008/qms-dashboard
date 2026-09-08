@@ -166,6 +166,19 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
 .chip-green{background:#eef8ef}
 .chip-yellow{background:#fdf8e8}
 .chip-red{background:#fdeceb}
+/* ── Matrix Table (DEVIATION 상세) ── */
+.matrix-table{border-collapse:collapse;font-size:.72rem;width:max-content;min-width:100%}
+.matrix-table th,.matrix-table td{border:1px solid #e4e4e7;padding:6px 10px;text-align:center;white-space:nowrap}
+.matrix-table thead th{background:#fafafa;color:#52525b;font-weight:800;position:sticky;top:0;z-index:2;font-size:.68rem;text-transform:none;letter-spacing:.2px;cursor:default}
+.matrix-table thead th:hover{background:#fafafa;color:#52525b}
+.matrix-table td.mtx-team{text-align:left;font-weight:700;color:#3f3f46;background:#fcfcfc}
+.matrix-table td.mtx-sub,.matrix-table th.mtx-sub{background:#f4f4f5;font-weight:700;color:#3f3f46}
+.matrix-table td.mtx-total,.matrix-table th.mtx-total{background:#eff6ff;color:#1d4ed8;font-weight:800}
+.matrix-table tbody tr:nth-child(even) td{background:#fcfcfc}
+.matrix-table tbody tr:nth-child(even) td.mtx-sub{background:#f4f4f5}
+.matrix-table tbody tr:nth-child(even) td.mtx-total{background:#eff6ff}
+.matrix-table tfoot td{background:#f4f4f5;font-weight:800;color:#18181b}
+.matrix-table td.mtx-zero{color:#d4d4d8}
 </style>
 </head>
 <body>
@@ -179,7 +192,7 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-09-08 15:52 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-09-08 16:46 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
@@ -192,12 +205,12 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
 
   <div id="page1" class="page-content active">
     <div class="page-title">QMS 종합현황</div>
-    <div class="year-label">2026년 현황</div>
     <div class="year-overview-card">
       <div class="year-row cur-row">
         <span class="year-row-label">2026년</span>
         <div class="year-metrics">
-          <div class="metric-item"><span class="metric-label">이벤트·OOS</span><span class="metric-val">158</span></div>
+          <div class="metric-item"><span class="metric-label">이벤트</span><span class="metric-val">153</span></div>
+          <div class="metric-item"><span class="metric-label">OOS</span><span class="metric-val">5</span></div>
           <div class="metric-item"><span class="metric-label">CAPA</span><span class="metric-val">60</span></div>
           <div class="metric-item chip-green"><span class="metric-label">완료</span><span class="metric-val">111</span></div>
           <div class="metric-item chip-yellow"><span class="metric-label">진행중</span><span class="metric-val">25</span></div>
@@ -207,7 +220,8 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
       <div class="year-row prev-row">
         <span class="year-row-label">2025년</span>
         <div class="year-metrics">
-          <div class="metric-item"><span class="metric-label">이벤트·OOS</span><span class="metric-val">274</span></div>
+          <div class="metric-item"><span class="metric-label">이벤트</span><span class="metric-val">265</span></div>
+          <div class="metric-item"><span class="metric-label">OOS</span><span class="metric-val">9</span></div>
           <div class="metric-item"><span class="metric-label">CAPA</span><span class="metric-val">121</span></div>
           <div class="metric-item"><span class="metric-label">완료</span><span class="metric-val">275</span></div>
           <div class="metric-item"><span class="metric-label">진행중</span><span class="metric-val">0</span></div>
@@ -217,7 +231,8 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
       <div class="year-row prev-row">
         <span class="year-row-label">2024년</span>
         <div class="year-metrics">
-          <div class="metric-item"><span class="metric-label">이벤트·OOS</span><span class="metric-val">142</span></div>
+          <div class="metric-item"><span class="metric-label">이벤트</span><span class="metric-val">132</span></div>
+          <div class="metric-item"><span class="metric-label">OOS</span><span class="metric-val">10</span></div>
           <div class="metric-item"><span class="metric-label">CAPA</span><span class="metric-val">73</span></div>
           <div class="metric-item"><span class="metric-label">완료</span><span class="metric-val">136</span></div>
           <div class="metric-item"><span class="metric-label">진행중</span><span class="metric-val">0</span></div>
@@ -316,9 +331,26 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
   </div>
 
   <div id="page2" class="page-content">
-    <div class="empty-page">
-      <h2>DEVIATION</h2>
-      <p>페이지 준비 중입니다.</p>
+    <div class="page-title">DEVIATION 현황</div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>EVENT 발생 추이 (최근 3개년)</h3>
+        <div class="chart-wrap"><canvas id="trendChart2"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3 id="teamChartTitle2">팀별 EVENT 발생 현황</h3>
+        <div class="chart-wrap"><canvas id="teamChart2"></canvas></div>
+      </div>
+    </div>
+    <div class="table-section">
+      <div class="table-header"><div class="table-title">팀별 EVENT·DVE 현황(상세)</div></div>
+      <div class="tbl-scroll" style="max-height:640px">
+        <table class="matrix-table" id="deviationDetailTable"></table>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-top:16px">
+      <h3>팀별 EVENT·DVE 현황 (2026년)</h3>
+      <div class="chart-wrap" style="height:280px"><canvas id="deviationDetailChart"></canvas></div>
     </div>
   </div>
 
@@ -471,20 +503,31 @@ window.onerror=function(msg,src,line,col,err){
   return false;
 };
 try{applyFilters();}catch(e){console.error('applyFilters 오류:',e);}
+var page2Inited=false;
 function showPage(n){
   document.querySelectorAll('.page-content').forEach(function(p){p.classList.remove('active');});
   document.querySelectorAll('.page-btn').forEach(function(b){b.classList.remove('active');});
   document.getElementById('page'+n).classList.add('active');
   document.querySelectorAll('.page-btn')[n-1].classList.add('active');
+  if(n===2 && !page2Inited){
+    page2Inited=true;
+    renderTrendChart('trendChart2');
+    renderTeamChart('teamChart2','teamChartTitle2');
+    renderDeviationDetail();
+  }
 }
-(function(){
+var CH_EA='E→A', CH_OICA='OOS→I→C→A';
+
+function renderTrendChart(canvasId){
   try{
+    var el=document.getElementById(canvasId);
+    if(!el)return;
     var years=Object.keys(TREND).sort();
     var withDev=years.map(function(y){return(TREND[y]&&TREND[y].with_dev)||0;});
     var withoutDev=years.map(function(y){return(TREND[y]&&TREND[y].without_dev)||0;});
     var totals=years.map(function(y){return(TREND[y]&&TREND[y].total)||0;});
     var stackedLabels={
-      id:'stackedLabels',
+      id:'stackedLabels_'+canvasId,
       afterDatasetsDraw:function(chart){
         var ctx=chart.ctx;
         chart.data.datasets.forEach(function(ds,di){
@@ -507,7 +550,7 @@ function showPage(n){
         });
       }
     };
-    new Chart(document.getElementById('trendChart'),{
+    new Chart(el,{
       type:'bar',plugins:[stackedLabels],
       data:{labels:years,datasets:[
         {label:'단순EVENT',data:withoutDev,backgroundColor:'#b7c9d6',borderRadius:4,stack:'ev',order:2},
@@ -521,14 +564,19 @@ function showPage(n){
         scales:{x:{stacked:true,ticks:{font:{size:12},maxRotation:0}},y:{stacked:true,beginAtZero:true,ticks:{font:{size:10},stepSize:5}}}
       }
     });
-  }catch(e){console.error('trendChart 오류:',e);}
-})();
-(function(){
+  }catch(e){console.error('trendChart 오류('+canvasId+'):',e);}
+}
+
+function renderTeamChart(canvasId,titleId){
   try{
+    var el=document.getElementById(canvasId);
+    if(!el)return;
     var curY=new Date().getFullYear(), preY=curY-1;
-    document.getElementById('teamChartTitle').textContent='팀별 EVENT 발생 현황 ('+preY+'년 / '+curY+'년)';
+    var titleEl=document.getElementById(titleId);
+    if(titleEl)titleEl.textContent='팀별 EVENT 발생 현황 ('+preY+'년 / '+curY+'년)';
     var seen=new Set(), td={};
     DATA.forEach(function(r){
+      if(r.chain_type===CH_OICA)return; // OOS 제외
       if(r.action_idx!=='1')return;
       var yr=r.event_create?r.event_create.substring(0,4):'';
       if(yr!==String(curY)&&yr!==String(preY))return;
@@ -541,7 +589,7 @@ function showPage(n){
       td[team][yr]=(td[team][yr]||0)+1;
     });
     var teams=Object.entries(td).sort(function(a,b){return(b[1][curY]+b[1][preY])-(a[1][curY]+a[1][preY]);}).slice(0,15).map(function(e){return e[0];});
-    new Chart(document.getElementById('teamChart'),{type:'bar',
+    new Chart(el,{type:'bar',
       data:{labels:teams,datasets:[
         {label:preY+'년',data:teams.map(function(t){return td[t][preY]||0;}),backgroundColor:'#a8cdb0',borderRadius:4},
         {label:curY+'년',data:teams.map(function(t){return td[t][curY]||0;}),backgroundColor:'#d9c88f',borderRadius:4}
@@ -551,8 +599,143 @@ function showPage(n){
         scales:{x:{ticks:{font:{size:9},maxRotation:35}},y:{beginAtZero:true,ticks:{font:{size:10},stepSize:1}}}
       }
     });
-  }catch(e){console.error('teamChart 오류:',e);}
-})();
+  }catch(e){console.error('teamChart 오류('+canvasId+'):',e);}
+}
+
+renderTrendChart('trendChart');
+renderTeamChart('teamChart','teamChartTitle');
+
+// ─── DEVIATION 상세: 팀별 EVENT·DVE 현황 ──────────────────
+var TEAM_ORDER=['Flu B.M.','VZ B.M.','VZ filing','filing','packaging','세균백신','기술이전','ET2','QA','QC','공무','GMP IT','DI','기타'];
+function simplifyTeam(raw){
+  var t=(raw||'').trim();
+  if(!t)return'기타';
+  var exact={
+    'Flu Bulk Manufacturing':'Flu B.M.','VZ Bulk Manufacturing':'VZ B.M.',
+    'VZ Filling':'VZ filing','Filling':'filing','Packaging':'packaging',
+    '세균백신':'세균백신','기술이전':'기술이전','ET2':'ET2','QA':'QA','QC':'QC',
+    '공무':'공무','GMP IT':'GMP IT','DI':'DI'
+  };
+  if(exact[t])return exact[t];
+  var low=t.toLowerCase();
+  if(low.indexOf('flu')>-1&&low.indexOf('bulk')>-1)return'Flu B.M.';
+  if((low.indexOf('vz')>-1||t.indexOf('수두')>-1)&&(low.indexOf('bulk')>-1||t.indexOf('원액')>-1))return'VZ B.M.';
+  if(low.indexOf('vz')>-1&&low.indexOf('fill')>-1)return'VZ filing';
+  if(low.indexOf('fill')>-1||t.indexOf('충전')>-1)return'filing';
+  if(low.indexOf('pack')>-1||t.indexOf('포장')>-1)return'packaging';
+  if(t.indexOf('세균')>-1)return'세균백신';
+  if(t.indexOf('기술이전')>-1)return'기술이전';
+  if(low==='et2')return'ET2';
+  if(low==='qa')return'QA';
+  if(low==='qc')return'QC';
+  if(t.indexOf('공무')>-1)return'공무';
+  if(low.indexOf('gmp')>-1&&low.indexOf('it')>-1)return'GMP IT';
+  if(low==='di')return'DI';
+  return'기타';
+}
+function buildDeviationDetail(){
+  var evMap={};
+  DATA.forEach(function(r){
+    var en=r.event_num;
+    if(!en||en.indexOf('EVENT-HSP-')!==0)return; // OOS 등 제외, EVENT만
+    if(r.chain_type===CH_OICA)return;
+    if(!evMap[en])evMap[en]={dept:r.event_dept||'',create:r.event_create||'',hasDev:false};
+    if(r.dev_num)evMap[en].hasDev=true;
+  });
+  var tbl={};
+  TEAM_ORDER.forEach(function(t){
+    tbl[t]={y2025:{event:0,dve:0},m2026:{}};
+    for(var m=1;m<=12;m++)tbl[t].m2026[m]={event:0,dve:0};
+  });
+  Object.keys(evMap).forEach(function(en){
+    var ev=evMap[en];
+    if(!ev.create||ev.create.length<7)return;
+    var yr=ev.create.substring(0,4), mo=parseInt(ev.create.substring(5,7),10);
+    if(yr!=='2025'&&yr!=='2026')return;
+    var team=simplifyTeam(ev.dept);
+    if(!tbl[team])team='기타';
+    var bucket=ev.hasDev?'dve':'event';
+    if(yr==='2025'){tbl[team].y2025[bucket]++;}
+    else if(mo>=1&&mo<=12){tbl[team].m2026[mo][bucket]++;}
+  });
+  return tbl;
+}
+function mtxCell(v,cls){
+  var c=(cls||'')+(v===0?' mtx-zero':'');
+  c=c.trim();
+  return'<td'+(c?' class="'+c+'"':'')+'>'+(v===0?'-':v)+'</td>';
+}
+function renderDeviationDetail(){
+  try{
+    var tbl=buildDeviationDetail();
+    var months=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+    var thead='<thead>';
+    thead+='<tr><th rowspan="3">구분</th><th colspan="2">2025년</th><th colspan="26">2026년</th><th rowspan="3" class="mtx-total">합계</th></tr>';
+    thead+='<tr><th class="mtx-sub">Event</th><th class="mtx-sub">DVE</th><th colspan="13" class="mtx-sub">Event</th><th colspan="13" class="mtx-sub">DVE</th></tr>';
+    var monthRow='<tr>';
+    months.forEach(function(m){monthRow+='<th>'+m+'</th>';});
+    monthRow+='<th class="mtx-sub">계</th>';
+    months.forEach(function(m){monthRow+='<th>'+m+'</th>';});
+    monthRow+='<th class="mtx-sub">계</th></tr>';
+    thead+=monthRow+'</thead>';
+
+    var totals={y2025:{event:0,dve:0},m2026:{}};
+    for(var mi=1;mi<=12;mi++)totals.m2026[mi]={event:0,dve:0};
+
+    var tbody='<tbody>';
+    TEAM_ORDER.forEach(function(team){
+      var row=tbl[team];
+      var ev2026=0,dve2026=0;
+      var rowHtml='<tr><td class="mtx-team">'+team+'</td>';
+      rowHtml+=mtxCell(row.y2025.event);
+      rowHtml+=mtxCell(row.y2025.dve);
+      for(var mo=1;mo<=12;mo++){rowHtml+=mtxCell(row.m2026[mo].event);ev2026+=row.m2026[mo].event;totals.m2026[mo].event+=row.m2026[mo].event;}
+      rowHtml+=mtxCell(ev2026,'mtx-sub');
+      for(var mo2=1;mo2<=12;mo2++){rowHtml+=mtxCell(row.m2026[mo2].dve);dve2026+=row.m2026[mo2].dve;totals.m2026[mo2].dve+=row.m2026[mo2].dve;}
+      rowHtml+=mtxCell(dve2026,'mtx-sub');
+      rowHtml+=mtxCell(ev2026+dve2026,'mtx-total');
+      rowHtml+='</tr>';
+      tbody+=rowHtml;
+      totals.y2025.event+=row.y2025.event; totals.y2025.dve+=row.y2025.dve;
+    });
+    tbody+='</tbody>';
+
+    var tEv2026=0,tDve2026=0;
+    for(var mo3=1;mo3<=12;mo3++){tEv2026+=totals.m2026[mo3].event;tDve2026+=totals.m2026[mo3].dve;}
+    var tfoot='<tfoot><tr><td class="mtx-team">합계</td>';
+    tfoot+=mtxCell(totals.y2025.event);
+    tfoot+=mtxCell(totals.y2025.dve);
+    for(var mo4=1;mo4<=12;mo4++)tfoot+=mtxCell(totals.m2026[mo4].event);
+    tfoot+=mtxCell(tEv2026,'mtx-sub');
+    for(var mo5=1;mo5<=12;mo5++)tfoot+=mtxCell(totals.m2026[mo5].dve);
+    tfoot+=mtxCell(tDve2026,'mtx-sub');
+    tfoot+=mtxCell(tEv2026+tDve2026,'mtx-total');
+    tfoot+='</tr></tfoot>';
+
+    var elTbl=document.getElementById('deviationDetailTable');
+    if(elTbl)elTbl.innerHTML=thead+tbody+tfoot;
+
+    var teamsForChart=TEAM_ORDER.filter(function(t){
+      var r=tbl[t],s=0;
+      for(var mo=1;mo<=12;mo++)s+=r.m2026[mo].event+r.m2026[mo].dve;
+      return s>0;
+    });
+    if(teamsForChart.length===0)teamsForChart=TEAM_ORDER;
+    var chartEl=document.getElementById('deviationDetailChart');
+    if(chartEl){
+      new Chart(chartEl,{type:'bar',
+        data:{labels:teamsForChart,datasets:[
+          {label:'Event',data:teamsForChart.map(function(t){var r=tbl[t],s=0;for(var mo=1;mo<=12;mo++)s+=r.m2026[mo].event;return s;}),backgroundColor:'#d9c88f',borderRadius:4},
+          {label:'DVE',data:teamsForChart.map(function(t){var r=tbl[t],s=0;for(var mo=1;mo<=12;mo++)s+=r.m2026[mo].dve;return s;}),backgroundColor:'#c48f8f',borderRadius:4}
+        ]},
+        options:{responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{position:'top',labels:{font:{size:11}}}},
+          scales:{x:{ticks:{font:{size:9},maxRotation:35}},y:{beginAtZero:true,ticks:{font:{size:10},stepSize:1}}}
+        }
+      });
+    }
+  }catch(e){console.error('deviationDetail 오류:',e);}
+}
 (function(){
   var tip=document.getElementById('qtip');
   document.addEventListener('mouseover',function(e){
