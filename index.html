@@ -181,6 +181,16 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
 .matrix-table tbody tr:nth-child(even) td.mtx-total{background:#eff6ff}
 .matrix-table tfoot td{background:#f4f4f5;font-weight:800;color:#18181b}
 .matrix-table td.mtx-zero{color:#d4d4d8}
+/* ── 컨테이너 그룹핑(페이지1 좌우 2열 / 페이지2 표+차트 묶음) ── */
+/* 검색 키워드: SECTION-GROUP-CSS */
+.top-groups-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;align-items:start}
+.section-group{background:#f7f7f8;border-radius:22px;padding:18px;border:1px solid #ececef}
+.section-group-title{font-size:.9rem;font-weight:800;color:#18181b;margin:2px 4px 14px;display:flex;align-items:center;gap:8px}
+.section-group-title::before{content:'';width:4px;height:15px;background:#a1a1aa;border-radius:3px;display:inline-block}
+.section-group .year-overview-card,.section-group .chart-card,.section-group .table-section{margin-bottom:0}
+.section-group>*+*{margin-top:16px}
+.placeholder-box{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:120px;border:1.5px dashed #d4d4d8;border-radius:14px;color:#a1a1aa;font-size:.78rem;gap:6px;background:#fff;text-align:center;padding:16px}
+@media(max-width:768px){.top-groups-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -194,7 +204,7 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-09-15 09:00 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-09-15 14:41 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
@@ -205,53 +215,98 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
 </nav>
 <div class="wrap">
 
+  <!-- ============ PAGE 1: 종합현황 (검색 키워드: PAGE1-HTML) ============
+       레이아웃: .top-groups-row 안에 좌/우 .section-group 2개
+       좌: "이벤트 현황" = 연도별 요약카드 + 이벤트발생추이 차트(trendChart)
+       우: "발생 QMS 모듈 별 CAPA 건수" = CAPA페이지(page3) 완성 전까지 placeholder-box
+       QMS FLOW & STATE 상세표/필터/검색은 PAGE2-HTML 최하단으로 이동됨 -->
   <div id="page1" class="page-content active">
     <div class="page-title">QMS 종합현황</div>
-    <div class="year-overview-card">
-      <div class="year-row cur-row">
-        <span class="year-row-label">2026년</span>
-        <div class="year-metrics">
-          <div class="metric-item"><span class="metric-label">이벤트</span><span class="metric-val">212</span></div>
-          <div class="metric-item"><span class="metric-label">OOS</span><span class="metric-val">6</span></div>
-          <div class="metric-item"><span class="metric-label">CAPA</span><span class="metric-val">64</span></div>
-          <div class="metric-item chip-green"><span class="metric-label">완료</span><span class="metric-val">200</span></div>
-          <div class="metric-item chip-yellow"><span class="metric-label">진행중</span><span class="metric-val">45</span></div>
-          <div class="metric-item chip-red"><span class="metric-label">기한초과</span><span class="metric-val">5</span></div>
+    <div class="top-groups-row">
+      <div class="section-group">
+        <div class="section-group-title">이벤트 현황</div>
+        <div class="year-overview-card">
+          <div class="year-row cur-row">
+            <span class="year-row-label">2026년</span>
+            <div class="year-metrics">
+              <div class="metric-item"><span class="metric-label">이벤트</span><span class="metric-val">212</span></div>
+              <div class="metric-item"><span class="metric-label">OOS</span><span class="metric-val">6</span></div>
+              <div class="metric-item"><span class="metric-label">CAPA</span><span class="metric-val">64</span></div>
+              <div class="metric-item chip-green"><span class="metric-label">완료</span><span class="metric-val">200</span></div>
+              <div class="metric-item chip-yellow"><span class="metric-label">진행중</span><span class="metric-val">45</span></div>
+              <div class="metric-item chip-red"><span class="metric-label">기한초과</span><span class="metric-val">5</span></div>
+            </div>
+          </div>
+          <div class="year-row prev-row">
+            <span class="year-row-label">2025년</span>
+            <div class="year-metrics">
+              <div class="metric-item"><span class="metric-label">이벤트</span><span class="metric-val">327</span></div>
+              <div class="metric-item"><span class="metric-label">OOS</span><span class="metric-val">9</span></div>
+              <div class="metric-item"><span class="metric-label">CAPA</span><span class="metric-val">121</span></div>
+              <div class="metric-item"><span class="metric-label">완료</span><span class="metric-val">391</span></div>
+              <div class="metric-item"><span class="metric-label">진행중</span><span class="metric-val">2</span></div>
+              <div class="metric-item"><span class="metric-label">기한초과</span><span class="metric-val">5</span></div>
+            </div>
+          </div>
+          <div class="year-row prev-row">
+            <span class="year-row-label">2024년</span>
+            <div class="year-metrics">
+              <div class="metric-item"><span class="metric-label">이벤트</span><span class="metric-val">162</span></div>
+              <div class="metric-item"><span class="metric-label">OOS</span><span class="metric-val">10</span></div>
+              <div class="metric-item"><span class="metric-label">CAPA</span><span class="metric-val">73</span></div>
+              <div class="metric-item"><span class="metric-label">완료</span><span class="metric-val">196</span></div>
+              <div class="metric-item"><span class="metric-label">진행중</span><span class="metric-val">2</span></div>
+              <div class="metric-item"><span class="metric-label">기한초과</span><span class="metric-val">0</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>이벤트 발생 추이 (최근 3개년)</h3>
+          <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
         </div>
       </div>
-      <div class="year-row prev-row">
-        <span class="year-row-label">2025년</span>
-        <div class="year-metrics">
-          <div class="metric-item"><span class="metric-label">이벤트</span><span class="metric-val">327</span></div>
-          <div class="metric-item"><span class="metric-label">OOS</span><span class="metric-val">9</span></div>
-          <div class="metric-item"><span class="metric-label">CAPA</span><span class="metric-val">121</span></div>
-          <div class="metric-item"><span class="metric-label">완료</span><span class="metric-val">391</span></div>
-          <div class="metric-item"><span class="metric-label">진행중</span><span class="metric-val">2</span></div>
-          <div class="metric-item"><span class="metric-label">기한초과</span><span class="metric-val">5</span></div>
-        </div>
-      </div>
-      <div class="year-row prev-row">
-        <span class="year-row-label">2024년</span>
-        <div class="year-metrics">
-          <div class="metric-item"><span class="metric-label">이벤트</span><span class="metric-val">162</span></div>
-          <div class="metric-item"><span class="metric-label">OOS</span><span class="metric-val">10</span></div>
-          <div class="metric-item"><span class="metric-label">CAPA</span><span class="metric-val">73</span></div>
-          <div class="metric-item"><span class="metric-label">완료</span><span class="metric-val">196</span></div>
-          <div class="metric-item"><span class="metric-label">진행중</span><span class="metric-val">2</span></div>
-          <div class="metric-item"><span class="metric-label">기한초과</span><span class="metric-val">0</span></div>
+      <div class="section-group">
+        <div class="section-group-title">발생 QMS 모듈 별 CAPA 건수</div>
+        <!-- TODO(page3 CAPA 완성 후): 아래 두 placeholder-box를 실제 표(<table>)와
+             원그래프(<canvas id="capaModulePieChart">)로 교체하고 render 함수 연결 -->
+        <div class="placeholder-box">모듈별 CAPA 표 — CAPA 페이지 완성 후 연동 예정</div>
+        <div class="chart-card">
+          <div class="placeholder-box" style="border:none;min-height:220px">원그래프 — CAPA 페이지 완성 후 연동 예정</div>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- ============ PAGE 2: DEVIATION 현황 (검색 키워드: PAGE2-HTML) ============
+       구성: 1) charts-row(트렌드/팀별 발생 현황) 2) section-group(팀별 상세표+차트2개)
+             3) QMS FLOW & STATE 상세표/필터/검색(구 페이지1에서 이동) -->
+  <div id="page2" class="page-content">
+    <div class="page-title">DEVIATION 현황</div>
     <div class="charts-row">
       <div class="chart-card">
         <h3>이벤트 발생 추이 (최근 3개년)</h3>
-        <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+        <div class="chart-wrap"><canvas id="trendChart2"></canvas></div>
       </div>
       <div class="chart-card">
-        <h3 id="teamChartTitle">팀별 이벤트 발생 현황</h3>
-        <div class="chart-wrap"><canvas id="teamChart"></canvas></div>
+        <h3 id="teamChartTitle2">팀별 이벤트 발생 현황</h3>
+        <div class="chart-wrap"><canvas id="teamChart2"></canvas></div>
       </div>
     </div>
+    <div class="section-group">
+      <div class="table-section">
+        <div class="table-header"><div class="table-title">팀별 EVENT·DVE 현황(상세)</div></div>
+        <div class="tbl-scroll" style="max-height:640px">
+          <table class="matrix-table" id="deviationDetailTable"></table>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>팀별 EVENT·DVE 현황 (2026년)</h3>
+        <div class="chart-wrap" style="height:280px"><canvas id="deviationDetailChart"></canvas></div>
+        <div class="chart-wrap" style="height:280px;margin-top:14px"><canvas id="deviationDetailChart2"></canvas></div>
+      </div>
+    </div>
+
+    <!-- QMS FLOW & STATE: 페이지1에서 이동됨 (검색 키워드: QMS-FLOW-STATE-HTML) -->
     <div class="filter-section">
       <div class="filter-bar">
         <div class="fg"><label>연도</label>
@@ -331,31 +386,6 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
         </table>
         <div id="noData" class="no-data" style="display:none">검색 결과가 없습니다.</div>
       </div>
-    </div>
-  </div>
-
-  <div id="page2" class="page-content">
-    <div class="page-title">DEVIATION 현황</div>
-    <div class="charts-row">
-      <div class="chart-card">
-        <h3>이벤트 발생 추이 (최근 3개년)</h3>
-        <div class="chart-wrap"><canvas id="trendChart2"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <h3 id="teamChartTitle2">팀별 이벤트 발생 현황</h3>
-        <div class="chart-wrap"><canvas id="teamChart2"></canvas></div>
-      </div>
-    </div>
-    <div class="table-section">
-      <div class="table-header"><div class="table-title">팀별 EVENT·DVE 현황(상세)</div></div>
-      <div class="tbl-scroll" style="max-height:640px">
-        <table class="matrix-table" id="deviationDetailTable"></table>
-      </div>
-    </div>
-    <div class="chart-card" style="margin-top:16px">
-      <h3>팀별 EVENT·DVE 현황 (2026년)</h3>
-      <div class="chart-wrap" style="height:280px"><canvas id="deviationDetailChart"></canvas></div>
-      <div class="chart-wrap" style="height:280px;margin-top:14px"><canvas id="deviationDetailChart2"></canvas></div>
     </div>
   </div>
 
@@ -602,7 +632,7 @@ function renderTeamChart(canvasId,titleId){
 }
 
 renderTrendChart('trendChart');
-renderTeamChart('teamChart','teamChartTitle');
+// 페이지1에는 더 이상 팀별 이벤트 발생 현황 차트가 없음(우측이 CAPA 모듈 영역으로 교체됨) — 페이지2의 teamChart2만 사용.
 
 // ─── DEVIATION 상세: 팀별 EVENT·DVE 현황 ──────────────────
 var TEAM_ORDER=['Flu B.M.','VZ B.M.','VZ filing','filing','packaging','세균백신','기술이전','ET2','QA','QC','공무','GMP IT','DI','기타'];
@@ -742,9 +772,10 @@ function renderDeviationDetail(){
     var elTbl=document.getElementById('deviationDetailTable');
     if(elTbl)elTbl.innerHTML=thead+tbody+tfoot;
 
-    // 아랫줄(QA/QC/GMP IT/DI/기타)과 윗줄(나머지 팀)로 그래프를 두 줄로 분리
-    var BOTTOM_TEAMS=['QA','QC','GMP IT','DI','기타'];
-    var TOP_TEAMS=TEAM_ORDER.filter(function(t){return BOTTOM_TEAMS.indexOf(t)===-1;});
+    // 팀별 상세 차트는 표(TEAM_ORDER 전체)와 달리 지정된 10개 팀만 두 줄로 고정 표시
+    // 윗줄: Flu B.M./VZ B.M./VZ filing/filing/packaging, 아랫줄: QA/QC/GMP IT/공무/기타
+    var TOP_TEAMS=['Flu B.M.','VZ B.M.','VZ filing','filing','packaging'];
+    var BOTTOM_TEAMS=['QA','QC','GMP IT','공무','기타'];
     function drawOneDeviationChart(canvasId,teams,fallbackToAll){
       var chartEl=document.getElementById(canvasId);
       if(!chartEl)return;
