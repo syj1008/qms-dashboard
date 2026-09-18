@@ -284,7 +284,7 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-09-18 18:35 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-09-18 18:39 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
     <button class="hdr-refresh-btn" onclick="location.reload()" title="최신 배포 버전으로 새로고침">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
@@ -397,22 +397,24 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
   </div>
 
   <!-- ============ PAGE 2: 이벤트 현황 (검색 키워드: PAGE2-HTML) ============
-       구성: 1) charts-row(트렌드/팀별 발생 현황) 2) section-group(팀별 상세표+차트2개)
-             3) QMS FLOW & STATE 상세표/필터/검색(구 페이지1에서 이동)
-       막대그래프 제목은 1페이지와 동일하게 그래프 아래(.chart-title-below)에 표시(요청 반영). -->
+       구성: 1) 맨 위 트렌드/팀별 발생 현황 차트 2개를 한 카드에(제목은 그래프 위, 원래 스타일 그대로)
+             2) section-group(팀별 상세표+차트2개, 제목은 그래프 아래 .chart-title-below 스타일)
+             3) QMS FLOW & STATE 상세표/필터/검색(구 페이지1에서 이동) -->
   <div id="page2" class="page-content">
     <div class="page-title">이벤트 현황</div>
-    <div class="charts-row">
-      <div class="chart-card">
-        <div class="chart-wrap"><canvas id="trendChart2"></canvas></div>
-        <h3 class="chart-title-below">이벤트 발생 추이 (최근 3개년)</h3>
-      </div>
-      <div class="chart-card">
-        <div class="chart-wrap"><canvas id="teamChart2"></canvas></div>
-        <h3 class="chart-title-below" id="teamChartTitle2">팀별 이벤트 발생 현황</h3>
+    <div class="chart-card">
+      <div class="charts-row" style="margin-bottom:0">
+        <div>
+          <h3>이벤트 발생 추이 (최근 3개년)</h3>
+          <div class="chart-wrap"><canvas id="trendChart2"></canvas></div>
+        </div>
+        <div>
+          <h3 id="teamChartTitle2">팀별 이벤트 발생 현황</h3>
+          <div class="chart-wrap"><canvas id="teamChart2"></canvas></div>
+        </div>
       </div>
     </div>
-    <div class="section-group">
+    <div class="section-group" style="margin-top:16px">
       <div class="table-section">
         <div class="table-header"><div class="table-title">팀별 EVENT·DVE 현황(상세)</div></div>
         <div class="tbl-scroll" style="max-height:640px">
@@ -1749,6 +1751,19 @@ function renderDeviationDetail(){
     // 윗줄: Flu B.M./VZ B.M./VZ filing/filing/packaging, 아랫줄: QA/QC/GMP IT/공무/기타
     var TOP_TEAMS=['Flu B.M.','VZ B.M.','VZ filing','Filing','Packaging'];
     var BOTTOM_TEAMS=['QA','QC','GMP IT','공무','기타'];
+    // 두 차트(TOP_TEAMS/BOTTOM_TEAMS)의 세로축 범위를 통일해야 막대 높이로 서로 비교가
+    // 가능하다(요청 반영) — 두 그룹 통틀어 가장 큰 단일 막대값을 구해 suggestedMax로 공유.
+    function teamGroupMax(teams){
+      var max=0;
+      teams.forEach(function(t){
+        var r=tbl[t]; if(!r)return;
+        var ev=0,dv=0;
+        for(var mo=1;mo<=12;mo++){ev+=r.m2026[mo].event;dv+=r.m2026[mo].dve;}
+        max=Math.max(max,ev,dv);
+      });
+      return max;
+    }
+    var sharedMax=Math.max(teamGroupMax(TOP_TEAMS),teamGroupMax(BOTTOM_TEAMS));
     function drawOneDeviationChart(canvasId,teams,fallbackToAll){
       var chartEl=document.getElementById(canvasId);
       if(!chartEl)return;
@@ -1765,7 +1780,7 @@ function renderDeviationDetail(){
         ]},
         options:{responsive:true,maintainAspectRatio:false,
           plugins:{legend:{position:'top',labels:{font:{size:11}}}},
-          scales:{x:{ticks:{font:{size:9},maxRotation:35}},y:{beginAtZero:true,ticks:{font:{size:10},stepSize:1}}}
+          scales:{x:{ticks:{font:{size:9},maxRotation:35}},y:{beginAtZero:true,suggestedMax:sharedMax,ticks:{font:{size:10},stepSize:1}}}
         }
       });
     }
