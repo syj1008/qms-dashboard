@@ -19,6 +19,13 @@ header h1 .hdr-fullname{font-size:.78rem;font-weight:600;color:#a1a1aa;letter-sp
 .hdr-right{display:flex;align-items:center;gap:8px}
 .hdr-badge{background:#f4f4f5;border:none;border-radius:999px;padding:6px 14px;font-size:.72rem;color:#52525b;font-weight:600}
 .hdr-badge span{color:#18181b;font-weight:800}
+/* 수동 새로고침 버튼: 매일 09:00 자동갱신 배지 옆에 배치. 실제로는 정적 HTML이라 그 자리에서
+   Snowflake를 다시 조회할 수는 없고, "지금 배포되어 있는 최신 버전"을 강제로 다시 불러오는
+   역할이다(예: run_dashboard.bat를 방금 수동 실행한 직후 바로 확인하고 싶을 때 유용).
+   (검색 키워드: HDR-REFRESH-BTN) */
+.hdr-refresh-btn{display:flex;align-items:center;gap:5px;background:#18181b;border:none;border-radius:999px;padding:6px 14px;font-size:.72rem;color:#fff;font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s}
+.hdr-refresh-btn:hover{background:#3f3f46}
+.hdr-refresh-btn svg{flex-shrink:0}
 /* ── Page Navigation ── */
 .page-nav{background:#fff;border-bottom:1px solid #e4e4e7;padding:10px clamp(12px,2vw,32px);display:flex;gap:8px;align-items:center;position:sticky;top:68px;z-index:40}
 .page-btn{padding:9px 22px;border:none;background:transparent;font-size:.85rem;font-weight:700;color:#a1a1aa;cursor:pointer;border-radius:999px;transition:all .2s;font-family:inherit;letter-spacing:-.1px;white-space:nowrap}
@@ -31,6 +38,12 @@ header h1 .hdr-fullname{font-size:.78rem;font-weight:600;color:#a1a1aa;letter-sp
 .admin-nav-btn{font-size:.68rem;font-weight:600;color:#c4c4c8;padding:6px 14px;margin-left:6px;border-left:1px solid #e4e4e7;border-radius:0}
 .admin-nav-btn:hover{color:#71717a;background:transparent}
 .admin-nav-btn.active{color:#52525b;background:#f4f4f5;border-radius:999px}
+/* QMS 원본 시스템 바로가기: 탭 행 맨 오른쪽 정렬(page-nav가 flex라 margin-left:auto로 밀어냄).
+   .page-btn 클래스를 쓰지 않아 showPage()의 인덱스 기반(.page-btn 목록[n-1]) 활성화 로직에
+   영향을 주지 않는다(검색 키워드: QMS-LINK-BTN-CSS). */
+.qms-link-btn{margin-left:auto;display:flex;align-items:center;gap:6px;padding:9px 18px;border:1px solid #e4e4e7;background:#fff;color:#52525b;font-size:.8rem;font-weight:700;border-radius:999px;text-decoration:none;white-space:nowrap;transition:all .2s}
+.qms-link-btn:hover{color:#18181b;border-color:#c4c4c8;background:#f4f4f5}
+.qms-link-btn svg{flex-shrink:0}
 /* ── 4페이지: 관리자페이지(CAPA 연장기한 등록) (검색 키워드: ADMIN-PAGE-CSS) ── */
 .adm-field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;max-width:420px}
 .adm-field label{font-size:.65rem;font-weight:700;color:#a1a1aa;text-transform:uppercase;letter-spacing:.5px;padding-left:2px}
@@ -264,8 +277,12 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-09-18 15:49 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-09-18 16:00 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
+    <button class="hdr-refresh-btn" onclick="location.reload()" title="최신 배포 버전으로 새로고침">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+      새로고침
+    </button>
   </div>
 </header>
 <nav class="page-nav">
@@ -274,6 +291,12 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
   <button class="page-btn" onclick="showPage(3)">CAPA</button>
   <!-- 관리자페이지: 지금은 비밀번호 없이 오픈 — 이번 라운드 마지막에 별도로 추가 예정(검색 키워드: ADMIN-NAV-BTN-HTML) -->
   <button class="page-btn admin-nav-btn" onclick="showPage(4)">관리자페이지</button>
+  <!-- QMS 원본 시스템 바로가기: .page-btn이 아니므로 showPage()의 인덱스 기반 활성화에 영향 없음
+       (검색 키워드: QMS-LINK-BTN-HTML) -->
+  <a class="qms-link-btn" href="http://qms.greencross.dom/qms/login/index.cfm" target="_blank" rel="noopener noreferrer">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+    QMS 바로가기
+  </a>
 </nav>
 <div class="wrap">
 
