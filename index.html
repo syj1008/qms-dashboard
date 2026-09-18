@@ -265,7 +265,7 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-09-18 15:14 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-09-18 15:20 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
@@ -1085,12 +1085,16 @@ var PctLabelsPlugin={
     ctx.save();
     ctx.font="600 10px 'Pretendard',sans-serif";
     ctx.textBaseline='middle';
-    // 바깥쪽(리더선) 라벨은 작은 슬라이스가 한쪽에 몰리면 서로 겹칠 수 있어, 좌/우 각각
-    // "마지막으로 놓은 라벨의 y좌표"를 기억해뒀다가 너무 가까우면 아래로 밀어 겹침을 줄인다
-    // (검색 키워드: PCT-LABEL-DECLUTTER). 슬라이스가 각도순(=대체로 위→아래)으로 순회되기
-    // 때문에 이 단순한 방식으로도 실용적으로 충분하다.
-    var lastY={left:null,right:null};
-    var minGap=13;
+    // 바깥쪽(리더선) 라벨: 슬라이스가 많아서(예: 14개 부서) 한쪽에 작은 조각이 몰리면 라벨을
+    // 세로로 쌓다가 차트 박스 아래로 넘쳐 잘리는 문제가 있었다(검색 키워드: PCT-LABEL-CLIP-FIX).
+    // 그래서 먼저 좌/우 각각의 라벨을 전부 모은 뒤, 차트 그리기 영역(chartArea) 안에
+    // 다 들어오도록 2단계로 좌표를 압축한다:
+    //   ① 라벨 수 × 최소간격이 가용 높이보다 크면 간격 자체를 줄여서 맞춘다.
+    //   ② 그래도 맨 아래(또는 맨 위) 라벨이 영역을 벗어나면 전체를 반대쪽으로 밀어 넣는다.
+    // (검색 키워드: PCT-LABEL-DECLUTTER)
+    var area=chart.chartArea;
+    var margin=6, minGap=13;
+    var outside={left:[],right:[]};
     meta.data.forEach(function(arc,i){
       var val=dataArr[i];
       if(!val)return;
@@ -1108,22 +1112,40 @@ var PctLabelsPlugin={
         ctx.fillText(text,rx,ry);
       }else{
         var side=cos>=0?'right':'left';
-        var p1x=cx+cos*outerR, p1y=cy+sin*outerR;
-        var p2x=cx+cos*(outerR+12), p2y=cy+sin*(outerR+12);
-        if(lastY[side]!==null && p2y-lastY[side]<minGap)p2y=lastY[side]+minGap;
-        lastY[side]=p2y;
-        var p3x=p2x+(cos>=0?14:-14), p3y=p2y;
+        outside[side].push({
+          p1x:cx+cos*outerR, p1y:cy+sin*outerR,
+          p2x:cx+cos*(outerR+12), naturalY:cy+sin*(outerR+12),
+          cos:cos, text:text
+        });
+      }
+    });
+    ['left','right'].forEach(function(side){
+      var items=outside[side];
+      if(!items.length)return;
+      items.sort(function(a,b){return a.naturalY-b.naturalY;});
+      var top=area.top+margin, bottom=area.bottom-margin;
+      var gap=items.length>1?Math.min(minGap,(bottom-top)/(items.length-1)):minGap;
+      var y=[Math.max(top,Math.min(items[0].naturalY,bottom-(items.length-1)*gap))];
+      for(var k=1;k<items.length;k++)y.push(Math.max(y[k-1]+gap,items[k].naturalY));
+      var overflow=y[y.length-1]-bottom;
+      if(overflow>0)for(var k2=0;k2<y.length;k2++)y[k2]-=overflow;
+      if(y[0]<top){ // 라벨이 너무 많아 위로 당겨도 공간이 부족한 극단적 경우 — 다 보이는 걸 우선
+        var shift=top-y[0];
+        for(var k3=0;k3<y.length;k3++)y[k3]+=shift;
+      }
+      items.forEach(function(it,idx){
+        var p2y=y[idx], p3x=it.p2x+(it.cos>=0?14:-14), p3y=p2y;
         ctx.strokeStyle='#a1a1aa';
         ctx.lineWidth=1;
         ctx.beginPath();
-        ctx.moveTo(p1x,p1y);
-        ctx.lineTo(p2x,p2y);
+        ctx.moveTo(it.p1x,it.p1y);
+        ctx.lineTo(it.p2x,p2y);
         ctx.lineTo(p3x,p3y);
         ctx.stroke();
         ctx.fillStyle='#52525b';
-        ctx.textAlign=cos>=0?'left':'right';
-        ctx.fillText(text,p3x+(cos>=0?3:-3),p3y);
-      }
+        ctx.textAlign=it.cos>=0?'left':'right';
+        ctx.fillText(it.text,p3x+(it.cos>=0?3:-3),p3y);
+      });
     });
     ctx.restore();
   }
