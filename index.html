@@ -265,7 +265,7 @@ tbody tr.grp-cont.overdue{background:#fef7f7!important}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="hdr-badge">기준일 <span>2026-09-18 14:59 KST</span></div>
+    <div class="hdr-badge">기준일 <span>2026-09-18 15:14 KST</span></div>
     <div class="hdr-badge">매일 <span>09:00</span> 자동갱신</div>
   </div>
 </header>
@@ -1488,9 +1488,9 @@ function simplifyTeam(raw){
     'VZ Filling':'VZ filing','수두완제':'VZ filing',
     'Filling':'Filing','충전':'Filing',
     'Packaging':'Packaging','포장':'Packaging',
-    '세균백신':'세균백신',
-    '기술이전':'기술이전',
-    'ET2':'ET2','SE':'ET2',
+    '세균백신':'세균백신','Bacterial Bulk Manufacturing':'세균백신',
+    '기술이전':'기술이전','Technology Transfer':'기술이전',
+    'ET2':'ET2','SE':'ET2','Engineering Technology 2':'ET2',
     'QA':'QA','QC':'QC',
     '공무':'공무','GMP IT':'GMP IT','DI':'DI'
   };
@@ -1507,12 +1507,14 @@ function simplifyTeam(raw){
   if(low.indexOf('vz')>-1&&low.indexOf('fill')>-1)return'VZ filing';
   if(low.indexOf('fill')>-1||norm.indexOf('충전')>-1)return'Filing';
   if(low.indexOf('pack')>-1||norm.indexOf('포장')>-1)return'Packaging';
-  if(norm.indexOf('세균')>-1)return'세균백신';
-  if(norm.indexOf('기술이전')>-1)return'기술이전';
-  if(low==='et2')return'ET2';
+  if(norm.indexOf('세균')>-1||low.indexOf('bacterial')>-1)return'세균백신';
+  if(norm.indexOf('기술이전')>-1||low.indexOf('technology transfer')>-1)return'기술이전';
+  // ET2: 반드시 "2"까지 있어야 함 — "Engineering Technology 1"(ET1)은 HSP 소속이 아니므로
+  // "2" 없이 "engineering technology"만 있다고 ET2로 묶으면 안 된다(요청 반영).
+  if(low==='et2'||(low.indexOf('engineering technology')>-1&&low.indexOf('2')>-1))return'ET2';
   if(norm.indexOf('공무')>-1)return'공무';
   if(low.indexOf('gmp')>-1&&low.indexOf('it')>-1)return'GMP IT';
-  if(low==='di')return'DI';
+  if(low==='di'||low.indexOf('data integrity')>-1)return'DI';
   return'기타';
 }
 function buildDeviationDetail(){
